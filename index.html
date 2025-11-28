@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request a Babysitter | Baby Bloom</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Find a Babysitter | Baby Bloom</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* --- CORE SYSTEM --- */
         :root {
             --primary: #FF8FAB;
             --secondary: #4A90E2;
@@ -15,232 +16,348 @@
             --white: #ffffff;
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent body scroll, we scroll internal containers */
         }
 
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        /* --- LAYOUT --- */
+        .header {
+            text-align: center;
+            padding: 15px 20px;
             background: var(--white);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            z-index: 10;
         }
 
-        h1 { text-align: center; color: var(--text); margin: 0 0 5px 0; font-weight: 700; }
-        .subtitle { text-align: center; color: #7f8c8d; margin: 0 0 30px 0; font-size: 0.95rem; }
+        h1 { margin: 0; font-size: 1.2rem; color: var(--primary); font-weight: 700; }
+        .subtitle { margin: 2px 0 0 0; font-size: 0.75rem; color: #7f8c8d; }
 
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--primary);
-            margin: 30px 0 15px 0;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 5px;
+        .wizard-container {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg);
         }
 
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 0.9rem; color: #555; }
+        .step {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            padding: 20px;
+            overflow-y: auto; /* Internal scrolling */
+            padding-bottom: 80px; /* Space for footer buttons */
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .step.active { display: block; opacity: 1; }
+
+        /* --- FORM ELEMENTS (COMPACT) --- */
+        .section-label {
+            font-size: 0.85rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; margin-top: 5px;
+        }
+
+        .input-group { margin-bottom: 15px; }
         
-        input[type="text"], input[type="tel"], input[type="date"], select {
+        input, select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            background: var(--white);
+        }
+        
+        input:focus, select:focus { outline: none; border-color: var(--primary); }
+
+        /* --- DYNAMIC LISTS (SCROLLABLE) --- */
+        .scroll-list {
+            max-height: 40vh; /* Keeps it above fold */
+            overflow-y: auto;
             border: 1px solid var(--border);
             border-radius: 10px;
-            font-family: 'Poppins', sans-serif;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-            background: #fcfcfc;
+            background: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
         }
 
-        /* --- SLIDER STYLING --- */
-        .slider-container {
-            display: flex; align-items: center; gap: 15px;
-            background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid var(--border);
+        .dynamic-item {
+            background: #f8f9fa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            position: relative;
         }
-        input[type="range"] {
-            flex: 1; height: 6px; -webkit-appearance: none; background: #ddd; border-radius: 5px; cursor: pointer;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 24px; height: 24px; background: var(--primary); border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .rate-display { font-size: 1.5rem; font-weight: 700; color: var(--text); min-width: 80px; text-align: right; }
+        .dynamic-item:last-child { margin-bottom: 0; }
 
-        /* --- DYNAMIC ROWS --- */
-        .dynamic-row {
-            background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
         .remove-btn {
-            position: absolute; top: -8px; right: -8px; background: #ff6b6b; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-weight: bold;
-        }
-        .add-btn {
-            background: #fff; border: 2px dashed var(--primary); color: var(--primary); width: 100%; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
-        }
-        .add-btn:hover { background: #fff0f5; }
-
-        /* --- TOTALS BAR --- */
-        .totals-bar {
-            background: #ebfaf0; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 10px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 600;
-        }
-        .total-val { font-size: 1.2rem; font-weight: 800; }
-
-        /* --- GRIDS --- */
-        .address-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
-        .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .kid-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
-
-        /* --- KID SELECTOR --- */
-        .kid-selector { display: flex; gap: 10px; }
-        .kid-option {
-            flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 10px; text-align: center; cursor: pointer; font-weight: 600; color: #777;
-        }
-        .kid-option.selected {
-            background: var(--primary); color: white; border-color: var(--primary);
+            position: absolute; top: 5px; right: 5px;
+            background: #ff6b6b; color: white;
+            border: none; width: 20px; height: 20px;
+            border-radius: 50%; font-size: 12px; line-height: 20px;
+            padding: 0; cursor: pointer;
         }
 
-        .submit-btn {
-            background: var(--secondary); color: white; width: 100%; padding: 16px; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 20px;
+        .mini-btn {
+            background: var(--white); border: 1px dashed var(--primary);
+            color: var(--primary); padding: 8px; width: 100%;
+            border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+            cursor: pointer;
         }
-        .submit-btn:hover { background: #357abd; }
 
-        #loader, #success-msg, #error-msg { display: none; text-align: center; margin-top: 20px; }
-        .spinner { border: 3px solid #eee; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px auto; }
+        /* Time Grid */
+        .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
+        .time-grid label { font-size: 0.75rem; color: #999; display: block; margin-bottom: 2px; }
+
+        /* Rate Slider */
+        .slider-box {
+            background: var(--white); padding: 15px; border-radius: 10px; border: 1px solid var(--border);
+            display: flex; align-items: center; gap: 10px;
+        }
+        input[type=range] { flex: 1; padding: 0; }
+        .rate-val { font-size: 1.2rem; font-weight: 700; color: var(--text); width: 60px; text-align: right; }
+
+        /* Kid Selector */
+        .kid-options { display: flex; gap: 8px; margin-bottom: 10px; }
+        .k-opt {
+            flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 6px;
+            text-align: center; font-weight: 600; font-size: 0.9rem; background: var(--white);
+        }
+        .k-opt.selected { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* --- SUMMARY CARD --- */
+        .summary-card {
+            background: var(--white); border-radius: 10px; padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 15px;
+        }
+        .sum-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px solid #f5f5f5; padding-bottom: 8px; }
+        .sum-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .sum-label { color: #888; }
+        .sum-val { font-weight: 600; text-align: right; }
+        .total-highlight { color: var(--secondary); font-size: 1.1rem; font-weight: 700; }
+
+        /* --- FOOTER NAVIGATION --- */
+        .footer-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--white);
+            padding: 15px 20px;
+            border-top: 1px solid var(--border);
+            display: flex; gap: 10px;
+            z-index: 20;
+        }
+
+        .nav-btn {
+            flex: 1; padding: 12px; border-radius: 10px;
+            font-weight: 600; font-size: 1rem; border: none; cursor: pointer;
+        }
+        .btn-back { background: #f0f2f5; color: #666; }
+        .btn-next { background: var(--secondary); color: white; }
+        .btn-submit { background: var(--primary); color: white; }
+
+        /* --- STATES --- */
+        #loader, #success-view { 
+            position: absolute; top:0; left:0; width:100%; height:100%; 
+            background: var(--white); z-index: 30; 
+            display: none; flex-direction: column; 
+            align-items: center; justify-content: center; text-align: center; padding: 30px;
+        }
+        .spinner {
+            border: 3px solid #eee; border-top: 3px solid var(--primary);
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #success-msg { background: #ebfaf0; color: #27ae60; padding: 20px; border-radius: 12px; font-weight: 600; }
-        #error-msg { background: #fadbd8; color: #c0392b; padding: 15px; border-radius: 12px; }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Post a Job</h1>
-    <p class="subtitle">Find a trusted Baby Bloom nanny</p>
+    <!-- HEADER -->
+    <div class="header">
+        <h1>Find a Babysitter</h1>
+        <div class="subtitle">We will find you a trusted and verified sitter</div>
+    </div>
 
-    <form id="jobForm">
+    <!-- WIZARD -->
+    <form id="wizardForm" class="wizard-container">
         
-        <!-- 1. DATES & TIMES -->
-        <div class="section-title" style="margin-top:0;">Dates & Times</div>
-        <div id="shiftsContainer"></div>
-        <button type="button" class="add-btn" onclick="addShift()">+ Add Shift</button>
+        <!-- STEP 1: JOB DETAILS -->
+        <div id="step1" class="step active">
+            <div class="section-label">Dates & Times</div>
+            <div class="scroll-list" id="shiftsContainer"></div>
+            <button type="button" class="mini-btn" onclick="addShift()">+ Add Shift</button>
 
-        <!-- 2. RATE -->
-        <div class="section-title">Hourly Rate</div>
-        <div class="slider-container">
-            <input type="range" id="rateSlider" min="35" max="75" value="35" oninput="updateRateDisplay()">
-            <div class="rate-display">$<span id="rateVal">35</span></div>
-        </div>
-
-        <!-- TOTALS PREVIEW -->
-        <div class="totals-bar">
-            <span>Estimated Total (<span id="totalHoursDisp">0</span> hrs)</span>
-            <span class="total-val">$<span id="totalPayDisp">0</span></span>
-        </div>
-
-        <!-- 3. ADDRESS -->
-        <div class="section-title">Location</div>
-        
-        <div class="form-group">
-            <label>Full Address (Street & No.)</label>
-            <input type="text" id="fullAddress" placeholder="123 Example St" required>
-        </div>
-        
-        <div class="address-grid">
-            <div class="form-group">
-                <label>Suburb</label>
-                <input list="suburbs" id="suburbInput" placeholder="Start typing..." required oninput="checkSuburb()">
+            <div class="section-label" style="margin-top: 20px;">Location</div>
+            <div class="input-group">
+                <input list="suburbs" type="text" id="suburbInput" placeholder="Select Suburb..." required onchange="validateSuburb()">
                 <datalist id="suburbs"></datalist>
+                <input type="hidden" id="postcode"> <!-- Hidden, populated by JS -->
             </div>
-            <div class="form-group">
-                <label>Postcode</label>
-                <input type="tel" id="postcode" placeholder="2000" maxlength="4" required>
+
+            <div class="section-label">Hourly Pay</div>
+            <div class="slider-box">
+                <input type="range" id="rateSlider" min="35" max="75" value="35" oninput="updateRateDisplay()">
+                <div class="rate-val">$<span id="rateVal">35</span></div>
             </div>
         </div>
 
-        <!-- 4. CHILDREN -->
-        <div class="section-title">Children</div>
-        
-        <div class="form-group">
-            <label>How many children?</label>
-            <div class="kid-selector">
-                <div class="kid-option" onclick="selectKids(1)" id="k1">1</div>
-                <div class="kid-option" onclick="selectKids(2)" id="k2">2</div>
-                <div class="kid-option" onclick="selectKids(3)" id="k3">3</div>
+        <!-- STEP 2: CHILD DETAILS -->
+        <div id="step2" class="step">
+            <div class="section-label">Number of Children</div>
+            <div class="kid-options">
+                <div class="k-opt" onclick="selectKids(1)" id="k1">1</div>
+                <div class="k-opt" onclick="selectKids(2)" id="k2">2</div>
+                <div class="k-opt" onclick="selectKids(3)" id="k3">3</div>
             </div>
-            <div id="kidsContainer" style="margin-top: 15px;"></div>
+
+            <div class="section-label">Details</div>
+            <div id="kidsContainer"></div>
         </div>
 
-        <button type="submit" class="submit-btn" id="submitBtn">Post Job Request</button>
+        <!-- STEP 3: SUMMARY -->
+        <div id="step3" class="step">
+            <div class="section-label">Review Request</div>
+            
+            <div class="summary-card">
+                <div class="sum-row">
+                    <span class="sum-label">Location</span>
+                    <span class="sum-val" id="sumLocation">-</span>
+                </div>
+                <div class="sum-row">
+                    <span class="sum-label">Children</span>
+                    <span class="sum-val" id="sumKids">-</span>
+                </div>
+                <div class="sum-row">
+                    <span class="sum-label">Rate</span>
+                    <span class="sum-val" id="sumRate">-</span>
+                </div>
+            </div>
 
-        <div id="loader"><div class="spinner"></div><div>Processing...</div></div>
-        <div id="success-msg">Job posted successfully! We are emailing nannies now.</div>
-        <div id="error-msg"></div>
+            <div class="section-label">Shifts</div>
+            <div class="summary-card" id="sumShiftsList"></div>
+
+            <div class="summary-card" style="background:#ebfaf0; border:1px solid #c3e6cb;">
+                <div class="sum-row">
+                    <span class="sum-label">Total Hours</span>
+                    <span class="sum-val" id="sumHours">0</span>
+                </div>
+                <div class="sum-row">
+                    <span class="sum-label" style="font-weight:700; color:#155724;">Est. Total Pay</span>
+                    <span class="sum-val total-highlight">$<span id="sumPay">0</span></span>
+                </div>
+            </div>
+        </div>
 
     </form>
-</div>
+
+    <!-- FOOTER NAVIGATION -->
+    <div class="footer-nav">
+        <button type="button" class="nav-btn btn-back" id="backBtn" onclick="prevStep()" style="display:none;">Back</button>
+        <button type="button" class="nav-btn btn-next" id="nextBtn" onclick="nextStep()">Continue</button>
+    </div>
+
+    <!-- STATES -->
+    <div id="loader">
+        <div class="spinner"></div>
+        <h3>Sending Request...</h3>
+        <p style="color:#777; font-size:0.9rem;">Please wait while we notify our nannies.</p>
+    </div>
+
+    <div id="success-view">
+        <div style="font-size:3rem;">🎉</div>
+        <h2 style="color:var(--primary);">Request Sent!</h2>
+        <p>We have emailed our available nannies.<br>You will be notified when one accepts.</p>
+    </div>
 
 <script>
-    // ================= CONFIG =================
-    // PASTE YOUR GAS URL HERE
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_QZnmquqwqw7dWMQMYzM_sZvvG7AXVVnMBOZuiV25i0f6Wu-cXg1hBPGZ8GMj-cCO4w/exec";
+    // --- CONFIG ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynlsLS9ZzA0YsuIh6l6edfEdgWnw1Xg79RB2tJk0E8dT-ITdYw69ejiL4YKb2dOThzhA/exec";
     
-    // ================= DATA =================
+    // --- DATA ---
     const SUBURB_DATA = {
         "Sydney":"2000","Ultimo":"2007","Chippendale":"2008","Pyrmont":"2009","Surry Hills":"2010","Potts Point":"2011","Alexandria":"2015","Redfern":"2016","Waterloo":"2017","Rosebery":"2018","Botany":"2019","Mascot":"2020","Paddington":"2021","Bondi Junction":"2022","Bellevue Hill":"2023","Waverley":"2024","Woollahra":"2025","Bondi":"2026","Edgecliff":"2027","Double Bay":"2028","Rose Bay":"2029","Vaucluse":"2030","Randwick":"2031","Kingsford":"2032","Kensington":"2033","Coogee":"2034","Maroubra":"2035","Little Bay":"2036","Glebe":"2037","Annandale":"2038","Rozelle":"2039","Leichhardt":"2040","Balmain":"2041","Newtown":"2042","Erskineville":"2043","St Peters":"2044","Haberfield":"2045","Five Dock":"2046","Drummoyne":"2047","Stanmore":"2048","Petersham":"2049","Camperdown":"2050","North Sydney":"2060","Kirribilli":"2061","Cammeray":"2062","Northbridge":"2063","Artarmon":"2064","Crows Nest":"2065","Lane Cove":"2066","Chatswood":"2067","Willoughby":"2068","Roseville":"2069","Lindfield":"2070","Killara":"2071","Gordon":"2072","Pymble":"2073","Turramurra":"2074","St Ives":"2075","Wahroonga":"2076","Hornsby":"2077","Mount Colah":"2079","Mount Kuring-Gai":"2080","Berowra":"2081","Cowan":"2082","Brooklyn":"2083","Cottage Point":"2084","Belrose":"2085","Frenchs Forest":"2086","Forestville":"2087","Mosman":"2088","Neutral Bay":"2089","Cremorne":"2090","Seaforth":"2092","Balgowlah":"2093","Fairlight":"2094","Manly":"2095","Freshwater":"2096","Collaroy":"2097","Dee Why":"2099","Brookvale":"2100","Narrabeen":"2101","Warriewood":"2102","Mona Vale":"2103","Bayview":"2104","Church Point":"2105","Newport":"2106","Avalon":"2107","Palm Beach":"2108","Hunters Hill":"2110","Gladesville":"2111","Ryde":"2112","North Ryde":"2113","West Ryde":"2114","Meadowbank":"2115","Rydalmere":"2116","Dundas":"2117","Carlingford":"2118","Beecroft":"2119","Pennant Hills":"2120","Epping":"2121","Eastwood":"2122","West Pennant Hills":"2125","Cherrybrook":"2126","Newington":"2127","Silverwater":"2128","Summer Hill":"2130","Ashfield":"2131","Croydon":"2132","Croydon Park":"2133","Burwood":"2134","Strathfield":"2135","Enfield":"2136","Concord":"2137","Rhodes":"2138","Homebush":"2140","Lidcombe":"2141","Granville":"2142","Regents Park":"2143","Auburn":"2144","Wentworthville":"2145","Toongabbie":"2146","Seven Hills":"2147","Blacktown":"2148","Parramatta":"2150","North Rocks":"2151","Northmead":"2152","Baulkham Hills":"2153","Castle Hill":"2154","Kellyville":"2155","Annangrove":"2156","Glenorie":"2157","Dural":"2158","Galston":"2159","Merrylands":"2160","Guildford":"2161","Chester Hill":"2162","Villawood":"2163","Smithfield":"2164","Fairfield":"2165","Canley Vale":"2166","Green Valley":"2168","Liverpool":"2170","Hoxton Park":"2171","Bossley Park":"2176","Greenacre":"2190","Belfield":"2191","Belmore":"2192","Canterbury":"2193","Campsie":"2194","Lakemba":"2195","Punchbowl":"2196","Bass Hill":"2197","Georges Hall":"2198","Yagoona":"2199","Bankstown":"2200","Dulwich Hill":"2203","Marrickville":"2204","Wolli Creek":"2205","Earlwood":"2206","Bexley":"2207","Kingsgrove":"2208","Beverly Hills":"2209","Peakhurst":"2210","Padstow":"2211","Revesby":"2212","Panania":"2213","Milperra":"2214","Rockdale":"2216","Kogarah":"2217","Carlton":"2218","Sans Souci":"2219","Hurstville":"2220","Carss Park":"2221","Penshurst":"2222","Oatley":"2223","Sylvania":"2224","Oyster Bay":"2225","Jannali":"2226","Gymea":"2227","Miranda":"2228","Caringbah":"2229","Cronulla":"2230","Kurnell":"2231","Sutherland":"2232","Engadine":"2233","Menai":"2234","Campbelltown":"2560","Camden":"2570","Glenmore Park":"2745","Kingswood":"2747","Penrith":"2750","St Marys":"2760","Quakers Hill":"2763","Glenwood":"2768"
     };
 
-    const AGE_OPTIONS = [
-        "Newborn", "3-6 months", "6-12 months", "1 year", "2 years", "3 years", 
-        "4 years", "5 years", "6 years", "7 years", "8 years", "9 years", 
-        "10 years", "11 years", "12 years", "13 years", "14 years", "15 years", "16 years"
-    ];
+    const AGE_OPTIONS = ["Newborn", "3-6 months", "6-12 months", "1 year", "2 years", "3 years", "4 years", "5 years", "6 years", "7 years", "8 years", "9 years", "10 years", "11 years", "12 years", "13 years", "14 years", "15 years", "16 years"];
 
     let shiftCount = 0;
+    let currentStep = 1;
     let selectedKidCount = 0;
 
-    // --- INITIALIZATION ---
+    // --- INIT ---
     window.addEventListener('DOMContentLoaded', () => {
         const params = new URLSearchParams(window.location.search);
         if (!params.get('cid')) {
             alert("Error: No Contact ID found.");
-            document.getElementById('jobForm').style.display = 'none';
+            document.body.innerHTML = "<div style='padding:20px;text-align:center;'>Error: Invalid Link.</div>";
+            return;
         }
 
-        // Init Suburb List
+        // Populate Suburbs
         const dl = document.getElementById('suburbs');
         Object.keys(SUBURB_DATA).forEach(sub => {
             const opt = document.createElement('option');
-            opt.value = sub;
+            opt.value = `${sub}, ${SUBURB_DATA[sub]}`; // Format: Mosman, 2088
             dl.appendChild(opt);
         });
 
-        // Add first shift
+        // Initialize Defaults
         addShift();
-        updateRateDisplay(); // Init calculator
+        updateRateDisplay();
     });
 
-    // --- SUBURB AUTO-FILL ---
-    function checkSuburb() {
-        const val = document.getElementById('suburbInput').value;
-        // Simple case-insensitive lookup
-        const match = Object.keys(SUBURB_DATA).find(k => k.toLowerCase() === val.toLowerCase());
-        if (match) {
-            document.getElementById('postcode').value = SUBURB_DATA[match];
+    // --- NAVIGATION ---
+    function nextStep() {
+        if (currentStep === 1) {
+            if (!validateStep1()) return;
+            showStep(2);
+        } else if (currentStep === 2) {
+            if (!validateStep2()) return;
+            prepareSummary();
+            showStep(3);
+            document.getElementById('nextBtn').innerText = "Post Request";
+            document.getElementById('nextBtn').classList.remove('btn-next');
+            document.getElementById('nextBtn').classList.add('btn-submit');
+        } else if (currentStep === 3) {
+            submitForm();
         }
     }
 
-    // --- RATE SLIDER ---
-    function updateRateDisplay() {
-        const val = document.getElementById('rateSlider').value;
-        document.getElementById('rateVal').innerText = val;
-        calculateTotal();
+    function prevStep() {
+        if (currentStep === 3) {
+            showStep(2);
+            document.getElementById('nextBtn').innerText = "Continue";
+            document.getElementById('nextBtn').classList.remove('btn-submit');
+            document.getElementById('nextBtn').classList.add('btn-next');
+        } else if (currentStep === 2) {
+            showStep(1);
+        }
     }
 
-    // --- SHIFTS ---
+    function showStep(step) {
+        document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+        document.getElementById(`step${step}`).classList.add('active');
+        currentStep = step;
+        
+        // Button Logic
+        const backBtn = document.getElementById('backBtn');
+        backBtn.style.display = (step === 1) ? 'none' : 'block';
+    }
+
+    // --- STEP 1 LOGIC (JOB) ---
     function generateTimeOptions() {
         let options = "";
         for (let h=0; h<24; h++) {
@@ -257,119 +374,163 @@
         if (shiftCount >= 7) return;
         shiftCount++;
 
-        // Min Date = Tomorrow
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const minDate = tomorrow.toISOString().split('T')[0];
-        
-        const container = document.getElementById('shiftsContainer');
+        // Minimum Date = Tomorrow
+        const tmrw = new Date(); tmrw.setDate(tmrw.getDate() + 1);
+        const minDate = tmrw.toISOString().split('T')[0];
+
         const div = document.createElement('div');
-        div.className = 'dynamic-row';
+        div.className = 'dynamic-item';
         div.id = `shift-${shiftCount}`;
-        
         div.innerHTML = `
             ${shiftCount > 1 ? `<button type="button" class="remove-btn" onclick="removeShift(${shiftCount})">×</button>` : ''}
-            <div class="form-group">
-                <label>Date</label>
-                <input type="date" class="shift-date" min="${minDate}" required onchange="calculateTotal()">
+            <div style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:#999;">Date</label>
+                <input type="date" class="shift-date" min="${minDate}" required>
             </div>
             <div class="time-grid">
-                <div>
-                    <label>Start</label>
-                    <select class="shift-start" onchange="calculateTotal()" required>${generateTimeOptions()}</select>
-                </div>
-                <div>
-                    <label>Finish</label>
-                    <select class="shift-end" onchange="calculateTotal()" required>${generateTimeOptions()}</select>
-                </div>
+                <div><label>Start</label><select class="shift-start">${generateTimeOptions()}</select></div>
+                <div><label>Finish</label><select class="shift-end">${generateTimeOptions()}</select></div>
             </div>
         `;
-        container.appendChild(div);
+        document.getElementById('shiftsContainer').appendChild(div);
         
-        // Default selection logic: Set start to 18:00, end to 22:00 for convenience
-        const startSel = div.querySelector('.shift-start');
-        const endSel = div.querySelector('.shift-end');
-        startSel.value = "18:00";
-        endSel.value = "22:00";
-        calculateTotal();
+        // Defaults
+        div.querySelector('.shift-start').value = "18:00";
+        div.querySelector('.shift-end').value = "22:00";
     }
 
     function removeShift(id) {
-        const el = document.getElementById(`shift-${id}`);
-        if(el) { el.remove(); shiftCount--; calculateTotal(); }
+        document.getElementById(`shift-${id}`).remove();
+        shiftCount--;
     }
 
-    // --- CALCULATOR ---
-    function calculateTotal() {
-        const rows = document.querySelectorAll('#shiftsContainer .dynamic-row');
-        let totalMinutes = 0;
+    function updateRateDisplay() {
+        document.getElementById('rateVal').innerText = document.getElementById('rateSlider').value;
+    }
 
-        rows.forEach(row => {
-            const start = row.querySelector('.shift-start').value;
-            const end = row.querySelector('.shift-end').value;
-            if(start && end) {
-                const [h1, m1] = start.split(':').map(Number);
-                const [h2, m2] = end.split(':').map(Number);
-                let mins = (h2*60 + m2) - (h1*60 + m1);
-                if (mins < 0) mins += 24*60; // Handle overnight
-                totalMinutes += mins;
+    function validateSuburb() {
+        const val = document.getElementById('suburbInput').value;
+        const parts = val.split(',');
+        if (parts.length > 1) {
+            // User likely picked from dropdown
+            document.getElementById('postcode').value = parts[1].trim();
+        } else {
+            // User typed it manually
+            const subName = val.trim();
+            // Try match against keys
+            const match = Object.keys(SUBURB_DATA).find(k => k.toLowerCase() === subName.toLowerCase());
+            if (match) {
+                document.getElementById('postcode').value = SUBURB_DATA[match];
+                document.getElementById('suburbInput').value = `${match}, ${SUBURB_DATA[match]}`;
             }
-        });
-
-        const totalHours = totalMinutes / 60;
-        const rate = parseInt(document.getElementById('rateSlider').value);
-        const pay = totalHours * rate;
-
-        document.getElementById('totalHoursDisp').innerText = totalHours.toFixed(2);
-        document.getElementById('totalPayDisp').innerText = Math.round(pay);
+        }
     }
 
-    // --- CHILDREN ---
+    function validateStep1() {
+        const dates = document.querySelectorAll('.shift-date');
+        const starts = document.querySelectorAll('.shift-start');
+        const ends = document.querySelectorAll('.shift-end');
+        const suburb = document.getElementById('suburbInput').value;
+
+        // Check filled fields
+        if (!suburb) { alert("Please select a suburb."); return false; }
+        
+        // Check Dates Logic
+        const today = new Date().toISOString().split('T')[0];
+        for(let d of dates) {
+            if (!d.value) { alert("Please select a date for all shifts."); return false; }
+            if (d.value <= today) { alert("Dates must be in the future (tomorrow onwards)."); return false; }
+        }
+        return true;
+    }
+
+    // --- STEP 2 LOGIC (KIDS) ---
     function selectKids(num) {
         selectedKidCount = num;
-        document.querySelectorAll('.kid-option').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.k-opt').forEach(el => el.classList.remove('selected'));
         document.getElementById(`k${num}`).classList.add('selected');
 
         const container = document.getElementById('kidsContainer');
         container.innerHTML = ''; 
-
-        // Generate Age Options
         let ageOpts = AGE_OPTIONS.map(a => `<option value="${a}">${a}</option>`).join('');
 
         for(let i=1; i<=num; i++) {
             const div = document.createElement('div');
-            div.className = 'dynamic-row';
+            div.className = 'dynamic-item';
             div.innerHTML = `
-                <div class="kid-grid">
-                    <div>
-                        <label>Age</label>
-                        <select class="kid-age">${ageOpts}</select>
-                    </div>
-                    <div>
-                        <label>Gender</label>
-                        <select class="kid-gender"><option value="Boy">Boy</option><option value="Girl">Girl</option></select>
-                    </div>
+                <div style="font-weight:600; font-size:0.8rem; margin-bottom:5px;">Child ${i}</div>
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:2"><select class="kid-age">${ageOpts}</select></div>
+                    <div style="flex:1"><select class="kid-gender"><option value="Boy">Boy</option><option value="Girl">Girl</option></select></div>
                 </div>
             `;
             container.appendChild(div);
         }
     }
 
-    // --- SUBMIT ---
-    document.getElementById('jobForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (selectedKidCount === 0) { alert("Please select number of children."); return; }
+    function validateStep2() {
+        if (selectedKidCount === 0) { alert("Please select number of children."); return false; }
+        return true;
+    }
 
+    // --- STEP 3 LOGIC (SUMMARY) ---
+    function prepareSummary() {
+        // Location
+        const sub = document.getElementById('suburbInput').value;
+        document.getElementById('sumLocation').innerText = sub;
+
+        // Kids
+        let kidSummary = [];
+        document.querySelectorAll('#kidsContainer .dynamic-item').forEach(row => {
+            kidSummary.push(row.querySelector('.kid-age').value);
+        });
+        document.getElementById('sumKids').innerText = `${selectedKidCount} (${kidSummary.join(', ')})`;
+
+        // Rate
+        const rate = parseInt(document.getElementById('rateSlider').value);
+        document.getElementById('sumRate').innerText = `$${rate}/hr`;
+
+        // Shifts & Totals
+        const list = document.getElementById('sumShiftsList');
+        list.innerHTML = "";
+        let totalMins = 0;
+
+        document.querySelectorAll('#shiftsContainer .dynamic-item').forEach(row => {
+            const d = row.querySelector('.shift-date').value;
+            const s = row.querySelector('.shift-start').value;
+            const e = row.querySelector('.shift-end').value;
+            
+            // Format Date
+            const dateObj = new Date(d);
+            const dateStr = dateObj.toLocaleDateString('en-AU', { weekday:'short', day:'numeric', month:'short' });
+
+            // Calc Duration
+            const [h1, m1] = s.split(':').map(Number);
+            const [h2, m2] = e.split(':').map(Number);
+            let mins = (h2*60 + m2) - (h1*60 + m1);
+            if (mins < 0) mins += 24*60;
+            totalMins += mins;
+
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'sum-row';
+            rowDiv.innerHTML = `<span style="font-weight:500;">${dateStr}</span><span>${s} - ${e}</span>`;
+            list.appendChild(rowDiv);
+        });
+
+        const totalHrs = totalMins / 60;
+        const totalPay = Math.round(totalHrs * rate);
+
+        document.getElementById('sumHours').innerText = totalHrs.toFixed(2);
+        document.getElementById('sumPay').innerText = totalPay;
+    }
+
+    // --- SUBMIT ---
+    async function submitForm() {
         const params = new URLSearchParams(window.location.search);
         
-        // Gather Data
-        const rate = document.getElementById('rateSlider').value;
-        const totalHours = document.getElementById('totalHoursDisp').innerText;
-        const totalPay = document.getElementById('totalPayDisp').innerText;
-
+        // Gather final payload
         const shifts = [];
-        document.querySelectorAll('#shiftsContainer .dynamic-row').forEach(row => {
+        document.querySelectorAll('#shiftsContainer .dynamic-item').forEach(row => {
             shifts.push({
                 date: row.querySelector('.shift-date').value,
                 start: row.querySelector('.shift-start').value,
@@ -378,32 +539,37 @@
         });
 
         const kids = [];
-        document.querySelectorAll('#kidsContainer .dynamic-row').forEach(row => {
+        document.querySelectorAll('#kidsContainer .dynamic-item').forEach(row => {
             kids.push({
                 age: row.querySelector('.kid-age').value,
                 gender: row.querySelector('.kid-gender').value
             });
         });
 
+        // Split Suburb/Postcode logic if user didn't select from dropdown
+        let subFull = document.getElementById('suburbInput').value;
+        let sub = subFull.split(',')[0].trim();
+        let pc = document.getElementById('postcode').value; 
+        // Note: postcode is hidden input, populated by dropdown logic. 
+        // If manual type, it might be empty, so fallback:
+        if (!pc && subFull.includes(',')) pc = subFull.split(',')[1].trim();
+
         const payload = {
             action: "BSR",
             contactId: params.get('cid'),
-            suburb: document.getElementById('suburbInput').value,
-            postcode: document.getElementById('postcode').value,
-            fullAddress: document.getElementById('fullAddress').value,
-            hourlyRate: rate,
-            totalHours: totalHours,
-            estimatedPay: totalPay,
+            suburb: sub,
+            postcode: pc,
+            fullAddress: "", // Removed as requested
+            hourlyRate: document.getElementById('rateSlider').value,
+            totalHours: document.getElementById('sumHours').innerText,
+            estimatedPay: document.getElementById('sumPay').innerText,
             numChildren: selectedKidCount,
             shifts: shifts,
             children: kids
         };
 
         // UI State
-        const btn = document.getElementById('submitBtn');
-        const loader = document.getElementById('loader');
-        btn.style.display = 'none';
-        loader.style.display = 'block';
+        document.getElementById('loader').style.display = 'flex';
 
         try {
             const response = await fetch(SCRIPT_URL, {
@@ -412,25 +578,21 @@
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify(payload)
             });
-            
             const result = await response.json();
-            loader.style.display = 'none';
+            
+            document.getElementById('loader').style.display = 'none';
 
             if (result.status === 'success') {
-                document.getElementById('success-msg').style.display = 'block';
-                document.getElementById('jobForm').reset();
+                document.getElementById('success-view').style.display = 'flex';
+                document.querySelector('.footer-nav').style.display = 'none'; // Hide buttons
             } else {
-                alert("Error: " + result.message);
-                btn.style.display = 'block';
+                alert("Server Error: " + result.message);
             }
-
         } catch (err) {
-            console.error(err);
-            alert("Connection Failed.");
-            loader.style.display = 'none';
-            btn.style.display = 'block';
+            document.getElementById('loader').style.display = 'none';
+            alert("Connection Error. Please check your internet.");
         }
-    });
+    }
 
 </script>
 
