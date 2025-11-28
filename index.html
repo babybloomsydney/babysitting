@@ -6,10 +6,8 @@
     <title>Request a Babysitter | Baby Bloom</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- DESIGN SYSTEM --- */
         :root {
-            --primary: #FF8FAB; /* Baby Bloom Pink */
-            --primary-hover: #fa7da0;
+            --primary: #FF8FAB;
             --secondary: #4A90E2;
             --bg: #F9FAFC;
             --text: #2c3e50;
@@ -23,7 +21,6 @@
             color: var(--text);
             margin: 0;
             padding: 20px;
-            min-height: 100vh;
         }
 
         .container {
@@ -35,185 +32,87 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        /* --- HEADER --- */
-        h1 { 
-            text-align: center; 
-            color: var(--text); 
-            margin: 0 0 5px 0; 
-            font-weight: 700;
-        }
-        
-        .subtitle { 
-            text-align: center; 
-            color: #7f8c8d; 
-            margin: 0 0 30px 0; 
-            font-size: 0.95rem; 
-        }
+        h1 { text-align: center; color: var(--text); margin: 0 0 5px 0; font-weight: 700; }
+        .subtitle { text-align: center; color: #7f8c8d; margin: 0 0 30px 0; font-size: 0.95rem; }
 
-        /* --- SECTIONS --- */
         .section-title {
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--primary);
-            margin: 25px 0 15px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .section-title::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: #eee;
+            margin: 30px 0 15px 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
         }
 
-        /* --- FORM ELEMENTS --- */
         .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 0.9rem; color: #555; }
         
-        label { 
-            display: block; 
-            font-weight: 500; 
-            margin-bottom: 8px; 
-            font-size: 0.9rem; 
-            color: #555;
-        }
-        
-        input, select {
+        input[type="text"], input[type="tel"], input[type="date"], select {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             font-family: 'Poppins', sans-serif;
             box-sizing: border-box;
             font-size: 0.95rem;
             background: #fcfcfc;
-            transition: 0.2s;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(255, 143, 171, 0.1);
         }
 
-        /* --- DYNAMIC ROWS (SHIFTS) --- */
+        /* --- SLIDER STYLING --- */
+        .slider-container {
+            display: flex; align-items: center; gap: 15px;
+            background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid var(--border);
+        }
+        input[type="range"] {
+            flex: 1; height: 6px; -webkit-appearance: none; background: #ddd; border-radius: 5px; cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 24px; height: 24px; background: var(--primary); border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .rate-display { font-size: 1.5rem; font-weight: 700; color: var(--text); min-width: 80px; text-align: right; }
+
+        /* --- DYNAMIC ROWS --- */
         .dynamic-row {
-            background: #fff;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            border: 1px solid var(--border);
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-
         .remove-btn {
-            position: absolute;
-            top: -8px; right: -8px;
-            background: #ff6b6b; color: white;
-            border: none; width: 24px; height: 24px;
-            border-radius: 50%; cursor: pointer;
-            font-weight: bold; line-height: 24px;
-            text-align: center; padding: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: absolute; top: -8px; right: -8px; background: #ff6b6b; color: white; border: none; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-weight: bold;
         }
-
         .add-btn {
-            background: #fff;
-            border: 2px dashed var(--primary);
-            color: var(--primary);
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.2s;
-            font-family: 'Poppins', sans-serif;
+            background: #fff; border: 2px dashed var(--primary); color: var(--primary); width: 100%; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
         }
         .add-btn:hover { background: #fff0f5; }
 
-        /* Grid for Times */
-        .time-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 12px; 
-            margin-top: 12px; 
+        /* --- TOTALS BAR --- */
+        .totals-bar {
+            background: #ebfaf0; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 10px; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 600;
         }
+        .total-val { font-size: 1.2rem; font-weight: 800; }
 
-        /* Grid for Kid Details */
-        .kid-grid { 
-            display: grid; 
-            grid-template-columns: 2fr 1fr; 
-            gap: 12px; 
-        }
+        /* --- GRIDS --- */
+        .address-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+        .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .kid-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
 
-        /* --- KID SELECTOR (1, 2, 3) --- */
+        /* --- KID SELECTOR --- */
         .kid-selector { display: flex; gap: 10px; }
         .kid-option {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            color: #777;
-            transition: 0.2s;
+            flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 10px; text-align: center; cursor: pointer; font-weight: 600; color: #777;
         }
         .kid-option.selected {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 4px 10px rgba(255, 143, 171, 0.3);
+            background: var(--primary); color: white; border-color: var(--primary);
         }
 
-        /* --- SUBMIT BUTTON --- */
         .submit-btn {
-            background: var(--secondary);
-            color: white;
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 30px;
-            transition: 0.2s;
-            font-family: 'Poppins', sans-serif;
+            background: var(--secondary); color: white; width: 100%; padding: 16px; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 20px;
         }
-        .submit-btn:hover { 
-            background: #357abd; 
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
-        }
-        .submit-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .submit-btn:hover { background: #357abd; }
 
-        /* --- STATES --- */
         #loader, #success-msg, #error-msg { display: none; text-align: center; margin-top: 20px; }
-        
-        .spinner {
-            border: 3px solid #eee; border-top: 3px solid var(--primary);
-            border-radius: 50%; width: 30px; height: 30px;
-            animation: spin 1s linear infinite; margin: 0 auto 10px auto;
-        }
+        .spinner { border: 3px solid #eee; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        #success-msg { 
-            background: #ebfaf0; 
-            color: #27ae60; 
-            padding: 20px; 
-            border-radius: 12px;
-            font-weight: 600;
-        }
-        #error-msg {
-            background: #fadbd8;
-            color: #c0392b;
-            padding: 15px;
-            border-radius: 12px;
-        }
-
+        #success-msg { background: #ebfaf0; color: #27ae60; padding: 20px; border-radius: 12px; font-weight: 600; }
+        #error-msg { background: #fadbd8; color: #c0392b; padding: 15px; border-radius: 12px; }
     </style>
 </head>
 <body>
@@ -224,39 +123,45 @@
 
     <form id="jobForm">
         
-        <!-- 1. LOCATION -->
+        <!-- 1. DATES & TIMES -->
+        <div class="section-title" style="margin-top:0;">Dates & Times</div>
+        <div id="shiftsContainer"></div>
+        <button type="button" class="add-btn" onclick="addShift()">+ Add Shift</button>
+
+        <!-- 2. RATE -->
+        <div class="section-title">Hourly Rate</div>
+        <div class="slider-container">
+            <input type="range" id="rateSlider" min="35" max="75" value="35" oninput="updateRateDisplay()">
+            <div class="rate-display">$<span id="rateVal">35</span></div>
+        </div>
+
+        <!-- TOTALS PREVIEW -->
+        <div class="totals-bar">
+            <span>Estimated Total (<span id="totalHoursDisp">0</span> hrs)</span>
+            <span class="total-val">$<span id="totalPayDisp">0</span></span>
+        </div>
+
+        <!-- 3. ADDRESS -->
         <div class="section-title">Location</div>
         
-        <div class="form-group">
-            <label>Suburb</label>
-            <input list="suburbs" name="suburb" id="suburbInput" placeholder="Start typing suburb..." required autocomplete="off">
-            <datalist id="suburbs">
-                <option value="Mosman"><option value="Bondi Beach"><option value="Coogee"><option value="Manly">
-                <option value="Surry Hills"><option value="Paddington"><option value="Balmain"><option value="Double Bay">
-                <option value="Rose Bay"><option value="Vaucluse"><option value="Randwick"><option value="Newtown">
-                <option value="Alexandria"><option value="Cronulla"><option value="Parramatta"><option value="Chatswood">
-                <option value="Neutral Bay"><option value="Cremorne"><option value="Bronte"><option value="Clovelly">
-            </datalist>
-        </div>
-
-        <div class="form-group">
-            <label>Postcode</label>
-            <input type="tel" id="postcode" placeholder="2000" maxlength="4" required>
-        </div>
-
         <div class="form-group">
             <label>Full Address (Street & No.)</label>
             <input type="text" id="fullAddress" placeholder="123 Example St" required>
         </div>
-
-        <!-- 2. SHIFTS -->
-        <div class="section-title">Dates & Times</div>
-        <p style="font-size:0.85rem; color:#888; margin-top:-10px; margin-bottom:15px;">You can add up to 7 shifts for this request.</p>
         
-        <div id="shiftsContainer"></div>
-        <button type="button" class="add-btn" onclick="addShift()">+ Add Another Shift</button>
+        <div class="address-grid">
+            <div class="form-group">
+                <label>Suburb</label>
+                <input list="suburbs" id="suburbInput" placeholder="Start typing..." required oninput="checkSuburb()">
+                <datalist id="suburbs"></datalist>
+            </div>
+            <div class="form-group">
+                <label>Postcode</label>
+                <input type="tel" id="postcode" placeholder="2000" maxlength="4" required>
+            </div>
+        </div>
 
-        <!-- 3. CHILDREN -->
+        <!-- 4. CHILDREN -->
         <div class="section-title">Children</div>
         
         <div class="form-group">
@@ -269,25 +174,10 @@
             <div id="kidsContainer" style="margin-top: 15px;"></div>
         </div>
 
-        <!-- 4. RATE -->
-        <div class="section-title">Rate</div>
-        <div class="form-group">
-            <label>Hourly Rate ($)</label>
-            <input type="number" id="hourlyRate" placeholder="35" min="20" required>
-        </div>
-
         <button type="submit" class="submit-btn" id="submitBtn">Post Job Request</button>
 
-        <!-- FEEDBACK STATES -->
-        <div id="loader">
-            <div class="spinner"></div>
-            <div>Sending request to nannies...</div>
-        </div>
-
-        <div id="success-msg">
-            Success! Your job has been posted.<br>We are emailing our nannies now.
-        </div>
-        
+        <div id="loader"><div class="spinner"></div><div>Processing...</div></div>
+        <div id="success-msg">Job posted successfully! We are emailing nannies now.</div>
         <div id="error-msg"></div>
 
     </form>
@@ -295,33 +185,82 @@
 
 <script>
     // ================= CONFIG =================
-    // Your provided GAS Deployment URL
+    // PASTE YOUR GAS URL HERE
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynlsLS9ZzA0YsuIh6l6edfEdgWnw1Xg79RB2tJk0E8dT-ITdYw69ejiL4YKb2dOThzhA/exec";
-    // ==========================================
+    
+    // ================= DATA =================
+    const SUBURB_DATA = {
+        "Sydney":"2000","Ultimo":"2007","Chippendale":"2008","Pyrmont":"2009","Surry Hills":"2010","Potts Point":"2011","Alexandria":"2015","Redfern":"2016","Waterloo":"2017","Rosebery":"2018","Botany":"2019","Mascot":"2020","Paddington":"2021","Bondi Junction":"2022","Bellevue Hill":"2023","Waverley":"2024","Woollahra":"2025","Bondi":"2026","Edgecliff":"2027","Double Bay":"2028","Rose Bay":"2029","Vaucluse":"2030","Randwick":"2031","Kingsford":"2032","Kensington":"2033","Coogee":"2034","Maroubra":"2035","Little Bay":"2036","Glebe":"2037","Annandale":"2038","Rozelle":"2039","Leichhardt":"2040","Balmain":"2041","Newtown":"2042","Erskineville":"2043","St Peters":"2044","Haberfield":"2045","Five Dock":"2046","Drummoyne":"2047","Stanmore":"2048","Petersham":"2049","Camperdown":"2050","North Sydney":"2060","Kirribilli":"2061","Cammeray":"2062","Northbridge":"2063","Artarmon":"2064","Crows Nest":"2065","Lane Cove":"2066","Chatswood":"2067","Willoughby":"2068","Roseville":"2069","Lindfield":"2070","Killara":"2071","Gordon":"2072","Pymble":"2073","Turramurra":"2074","St Ives":"2075","Wahroonga":"2076","Hornsby":"2077","Mount Colah":"2079","Mount Kuring-Gai":"2080","Berowra":"2081","Cowan":"2082","Brooklyn":"2083","Cottage Point":"2084","Belrose":"2085","Frenchs Forest":"2086","Forestville":"2087","Mosman":"2088","Neutral Bay":"2089","Cremorne":"2090","Seaforth":"2092","Balgowlah":"2093","Fairlight":"2094","Manly":"2095","Freshwater":"2096","Collaroy":"2097","Dee Why":"2099","Brookvale":"2100","Narrabeen":"2101","Warriewood":"2102","Mona Vale":"2103","Bayview":"2104","Church Point":"2105","Newport":"2106","Avalon":"2107","Palm Beach":"2108","Hunters Hill":"2110","Gladesville":"2111","Ryde":"2112","North Ryde":"2113","West Ryde":"2114","Meadowbank":"2115","Rydalmere":"2116","Dundas":"2117","Carlingford":"2118","Beecroft":"2119","Pennant Hills":"2120","Epping":"2121","Eastwood":"2122","West Pennant Hills":"2125","Cherrybrook":"2126","Newington":"2127","Silverwater":"2128","Summer Hill":"2130","Ashfield":"2131","Croydon":"2132","Croydon Park":"2133","Burwood":"2134","Strathfield":"2135","Enfield":"2136","Concord":"2137","Rhodes":"2138","Homebush":"2140","Lidcombe":"2141","Granville":"2142","Regents Park":"2143","Auburn":"2144","Wentworthville":"2145","Toongabbie":"2146","Seven Hills":"2147","Blacktown":"2148","Parramatta":"2150","North Rocks":"2151","Northmead":"2152","Baulkham Hills":"2153","Castle Hill":"2154","Kellyville":"2155","Annangrove":"2156","Glenorie":"2157","Dural":"2158","Galston":"2159","Merrylands":"2160","Guildford":"2161","Chester Hill":"2162","Villawood":"2163","Smithfield":"2164","Fairfield":"2165","Canley Vale":"2166","Green Valley":"2168","Liverpool":"2170","Hoxton Park":"2171","Bossley Park":"2176","Greenacre":"2190","Belfield":"2191","Belmore":"2192","Canterbury":"2193","Campsie":"2194","Lakemba":"2195","Punchbowl":"2196","Bass Hill":"2197","Georges Hall":"2198","Yagoona":"2199","Bankstown":"2200","Dulwich Hill":"2203","Marrickville":"2204","Wolli Creek":"2205","Earlwood":"2206","Bexley":"2207","Kingsgrove":"2208","Beverly Hills":"2209","Peakhurst":"2210","Padstow":"2211","Revesby":"2212","Panania":"2213","Milperra":"2214","Rockdale":"2216","Kogarah":"2217","Carlton":"2218","Sans Souci":"2219","Hurstville":"2220","Carss Park":"2221","Penshurst":"2222","Oatley":"2223","Sylvania":"2224","Oyster Bay":"2225","Jannali":"2226","Gymea":"2227","Miranda":"2228","Caringbah":"2229","Cronulla":"2230","Kurnell":"2231","Sutherland":"2232","Engadine":"2233","Menai":"2234","Campbelltown":"2560","Camden":"2570","Glenmore Park":"2745","Kingswood":"2747","Penrith":"2750","St Marys":"2760","Quakers Hill":"2763","Glenwood":"2768"
+    };
+
+    const AGE_OPTIONS = [
+        "Newborn", "3-6 months", "6-12 months", "1 year", "2 years", "3 years", 
+        "4 years", "5 years", "6 years", "7 years", "8 years", "9 years", 
+        "10 years", "11 years", "12 years", "13 years", "14 years", "15 years", "16 years"
+    ];
 
     let shiftCount = 0;
     let selectedKidCount = 0;
 
-    // 1. Initialize
+    // --- INITIALIZATION ---
     window.addEventListener('DOMContentLoaded', () => {
-        // Validate CID
         const params = new URLSearchParams(window.location.search);
         if (!params.get('cid')) {
-            alert("Error: No Contact ID found. Please access this page from your personalized link.");
+            alert("Error: No Contact ID found.");
             document.getElementById('jobForm').style.display = 'none';
         }
-        
-        // Add first shift by default
+
+        // Init Suburb List
+        const dl = document.getElementById('suburbs');
+        Object.keys(SUBURB_DATA).forEach(sub => {
+            const opt = document.createElement('option');
+            opt.value = sub;
+            dl.appendChild(opt);
+        });
+
+        // Add first shift
         addShift();
+        updateRateDisplay(); // Init calculator
     });
 
-    // 2. Add Shift Logic
-    function addShift() {
-        if (shiftCount >= 7) {
-            alert("Maximum 7 shifts per request.");
-            return;
+    // --- SUBURB AUTO-FILL ---
+    function checkSuburb() {
+        const val = document.getElementById('suburbInput').value;
+        // Simple case-insensitive lookup
+        const match = Object.keys(SUBURB_DATA).find(k => k.toLowerCase() === val.toLowerCase());
+        if (match) {
+            document.getElementById('postcode').value = SUBURB_DATA[match];
         }
+    }
+
+    // --- RATE SLIDER ---
+    function updateRateDisplay() {
+        const val = document.getElementById('rateSlider').value;
+        document.getElementById('rateVal').innerText = val;
+        calculateTotal();
+    }
+
+    // --- SHIFTS ---
+    function generateTimeOptions() {
+        let options = "";
+        for (let h=0; h<24; h++) {
+            for (let m=0; m<60; m+=15) {
+                let hh = h.toString().padStart(2, '0');
+                let mm = m.toString().padStart(2, '0');
+                options += `<option value="${hh}:${mm}">${hh}:${mm}</option>`;
+            }
+        }
+        return options;
+    }
+
+    function addShift() {
+        if (shiftCount >= 7) return;
         shiftCount++;
+
+        // Min Date = Tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const minDate = tomorrow.toISOString().split('T')[0];
         
         const container = document.getElementById('shiftsContainer');
         const div = document.createElement('div');
@@ -330,43 +269,72 @@
         
         div.innerHTML = `
             ${shiftCount > 1 ? `<button type="button" class="remove-btn" onclick="removeShift(${shiftCount})">×</button>` : ''}
-            <div class="form-group" style="margin-bottom:0">
+            <div class="form-group">
                 <label>Date</label>
-                <input type="date" class="shift-date" required>
+                <input type="date" class="shift-date" min="${minDate}" required onchange="calculateTotal()">
             </div>
             <div class="time-grid">
                 <div>
-                    <label style="font-size:0.8rem">Start Time</label>
-                    <input type="time" class="shift-start" required>
+                    <label>Start</label>
+                    <select class="shift-start" onchange="calculateTotal()" required>${generateTimeOptions()}</select>
                 </div>
                 <div>
-                    <label style="font-size:0.8rem">Finish Time</label>
-                    <input type="time" class="shift-end" required>
+                    <label>Finish</label>
+                    <select class="shift-end" onchange="calculateTotal()" required>${generateTimeOptions()}</select>
                 </div>
             </div>
         `;
         container.appendChild(div);
+        
+        // Default selection logic: Set start to 18:00, end to 22:00 for convenience
+        const startSel = div.querySelector('.shift-start');
+        const endSel = div.querySelector('.shift-end');
+        startSel.value = "18:00";
+        endSel.value = "22:00";
+        calculateTotal();
     }
 
     function removeShift(id) {
         const el = document.getElementById(`shift-${id}`);
-        if(el) {
-            el.remove();
-            shiftCount--;
-        }
+        if(el) { el.remove(); shiftCount--; calculateTotal(); }
     }
 
-    // 3. Child Logic
+    // --- CALCULATOR ---
+    function calculateTotal() {
+        const rows = document.querySelectorAll('#shiftsContainer .dynamic-row');
+        let totalMinutes = 0;
+
+        rows.forEach(row => {
+            const start = row.querySelector('.shift-start').value;
+            const end = row.querySelector('.shift-end').value;
+            if(start && end) {
+                const [h1, m1] = start.split(':').map(Number);
+                const [h2, m2] = end.split(':').map(Number);
+                let mins = (h2*60 + m2) - (h1*60 + m1);
+                if (mins < 0) mins += 24*60; // Handle overnight
+                totalMinutes += mins;
+            }
+        });
+
+        const totalHours = totalMinutes / 60;
+        const rate = parseInt(document.getElementById('rateSlider').value);
+        const pay = totalHours * rate;
+
+        document.getElementById('totalHoursDisp').innerText = totalHours.toFixed(2);
+        document.getElementById('totalPayDisp').innerText = Math.round(pay);
+    }
+
+    // --- CHILDREN ---
     function selectKids(num) {
         selectedKidCount = num;
-        
-        // Visual Selection
         document.querySelectorAll('.kid-option').forEach(el => el.classList.remove('selected'));
         document.getElementById(`k${num}`).classList.add('selected');
 
-        // Render Inputs
         const container = document.getElementById('kidsContainer');
-        container.innerHTML = ''; // Clear
+        container.innerHTML = ''; 
+
+        // Generate Age Options
+        let ageOpts = AGE_OPTIONS.map(a => `<option value="${a}">${a}</option>`).join('');
 
         for(let i=1; i<=num; i++) {
             const div = document.createElement('div');
@@ -374,15 +342,12 @@
             div.innerHTML = `
                 <div class="kid-grid">
                     <div>
-                        <label>Age (Child ${i})</label>
-                        <input type="text" class="kid-age" placeholder="e.g. 2 years" required>
+                        <label>Age</label>
+                        <select class="kid-age">${ageOpts}</select>
                     </div>
                     <div>
                         <label>Gender</label>
-                        <select class="kid-gender">
-                            <option value="Boy">Boy</option>
-                            <option value="Girl">Girl</option>
-                        </select>
+                        <select class="kid-gender"><option value="Boy">Boy</option><option value="Girl">Girl</option></select>
                     </div>
                 </div>
             `;
@@ -390,25 +355,19 @@
         }
     }
 
-    // 4. Form Submission
+    // --- SUBMIT ---
     document.getElementById('jobForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        if (selectedKidCount === 0) {
-            alert("Please select the number of children.");
-            return;
-        }
+        if (selectedKidCount === 0) { alert("Please select number of children."); return; }
 
-        // A. Gather Data
         const params = new URLSearchParams(window.location.search);
-        const contactId = params.get('cid');
+        
+        // Gather Data
+        const rate = document.getElementById('rateSlider').value;
+        const totalHours = document.getElementById('totalHoursDisp').innerText;
+        const totalPay = document.getElementById('totalPayDisp').innerText;
 
-        const suburb = document.getElementById('suburbInput').value;
-        const postcode = document.getElementById('postcode').value;
-        const fullAddress = document.getElementById('fullAddress').value;
-        const rate = document.getElementById('hourlyRate').value;
-
-        // B. Gather Shifts
         const shifts = [];
         document.querySelectorAll('#shiftsContainer .dynamic-row').forEach(row => {
             shifts.push({
@@ -418,7 +377,6 @@
             });
         });
 
-        // C. Gather Kids
         const kids = [];
         document.querySelectorAll('#kidsContainer .dynamic-row').forEach(row => {
             kids.push({
@@ -427,30 +385,27 @@
             });
         });
 
-        // D. Construct Payload
         const payload = {
-            action: "BSR", // CRITICAL: Routes to the new BSR handler
-            contactId: contactId,
-            suburb: suburb,
-            postcode: postcode,
-            fullAddress: fullAddress,
+            action: "BSR",
+            contactId: params.get('cid'),
+            suburb: document.getElementById('suburbInput').value,
+            postcode: document.getElementById('postcode').value,
+            fullAddress: document.getElementById('fullAddress').value,
             hourlyRate: rate,
+            totalHours: totalHours,
+            estimatedPay: totalPay,
             numChildren: selectedKidCount,
             shifts: shifts,
             children: kids
         };
 
-        // E. Send
+        // UI State
         const btn = document.getElementById('submitBtn');
         const loader = document.getElementById('loader');
-        const errorMsg = document.getElementById('error-msg');
-        
         btn.style.display = 'none';
         loader.style.display = 'block';
-        errorMsg.style.display = 'none';
 
         try {
-            // We use 'text/plain' to avoid CORS issues with GAS
             const response = await fetch(SCRIPT_URL, {
                 method: "POST",
                 redirect: "follow",
@@ -459,27 +414,19 @@
             });
             
             const result = await response.json();
-            
             loader.style.display = 'none';
 
             if (result.status === 'success') {
-                document.getElementById('jobForm').reset();
-                document.getElementById('shiftsContainer').innerHTML = '';
-                document.getElementById('kidsContainer').innerHTML = '';
-                addShift(); // Reset to 1 shift
-                document.querySelectorAll('.kid-option').forEach(el => el.classList.remove('selected'));
                 document.getElementById('success-msg').style.display = 'block';
-                // Hide success message after 10 seconds? Optional.
+                document.getElementById('jobForm').reset();
             } else {
-                errorMsg.innerText = "Error: " + result.message;
-                errorMsg.style.display = 'block';
+                alert("Error: " + result.message);
                 btn.style.display = 'block';
             }
 
         } catch (err) {
             console.error(err);
-            errorMsg.innerText = "Connection Failed. Please try again.";
-            errorMsg.style.display = 'block';
+            alert("Connection Failed.");
             loader.style.display = 'none';
             btn.style.display = 'block';
         }
