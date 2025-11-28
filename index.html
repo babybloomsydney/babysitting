@@ -6,73 +6,117 @@
     <title>Request a Babysitter | Baby Bloom</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* --- DESIGN SYSTEM --- */
         :root {
-            --primary: #FF8FAB;
+            --primary: #FF8FAB; /* Baby Bloom Pink */
             --primary-hover: #fa7da0;
+            --secondary: #4A90E2;
             --bg: #F9FAFC;
             --text: #2c3e50;
-            --input-bg: #fff;
             --border: #e1e4e8;
+            --white: #ffffff;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            padding: 20px;
             margin: 0;
+            padding: 20px;
+            min-height: 100vh;
         }
 
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background: white;
+            background: var(--white);
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        h1 { text-align: center; color: var(--primary); margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; font-size: 0.9rem; }
+        /* --- HEADER --- */
+        h1 { 
+            text-align: center; 
+            color: var(--text); 
+            margin: 0 0 5px 0; 
+            font-weight: 700;
+        }
+        
+        .subtitle { 
+            text-align: center; 
+            color: #7f8c8d; 
+            margin: 0 0 30px 0; 
+            font-size: 0.95rem; 
+        }
+
+        /* --- SECTIONS --- */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 25px 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #eee;
+        }
 
         /* --- FORM ELEMENTS --- */
         .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+        
+        label { 
+            display: block; 
+            font-weight: 500; 
+            margin-bottom: 8px; 
+            font-size: 0.9rem; 
+            color: #555;
+        }
         
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 12px;
             font-family: 'Poppins', sans-serif;
-            box-sizing: border-box; /* Fix width issues */
+            box-sizing: border-box;
             font-size: 0.95rem;
+            background: #fcfcfc;
+            transition: 0.2s;
         }
         
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(255, 143, 171, 0.2);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 143, 171, 0.1);
         }
 
-        /* --- DYNAMIC SECTIONS (Shifts & Kids) --- */
+        /* --- DYNAMIC ROWS (SHIFTS) --- */
         .dynamic-row {
-            background: #f8f9fa;
+            background: #fff;
             padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #eee;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
             position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
         .remove-btn {
             position: absolute;
-            top: 10px; right: 10px;
+            top: -8px; right: -8px;
             background: #ff6b6b; color: white;
-            border: none; width: 25px; height: 25px;
+            border: none; width: 24px; height: 24px;
             border-radius: 50%; cursor: pointer;
-            font-weight: bold; line-height: 25px;
+            font-weight: bold; line-height: 24px;
             text-align: center; padding: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .add-btn {
@@ -80,56 +124,75 @@
             border: 2px dashed var(--primary);
             color: var(--primary);
             width: 100%;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 12px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
             transition: 0.2s;
+            font-family: 'Poppins', sans-serif;
         }
         .add-btn:hover { background: #fff0f5; }
 
         /* Grid for Times */
-        .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .time-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin-top: 12px; 
+        }
 
         /* Grid for Kid Details */
-        .kid-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+        .kid-grid { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr; 
+            gap: 12px; 
+        }
 
         /* --- KID SELECTOR (1, 2, 3) --- */
         .kid-selector { display: flex; gap: 10px; }
         .kid-option {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             text-align: center;
             cursor: pointer;
             font-weight: 600;
+            color: #777;
+            transition: 0.2s;
         }
         .kid-option.selected {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(255, 143, 171, 0.3);
         }
 
         /* --- SUBMIT BUTTON --- */
         .submit-btn {
-            background: var(--primary);
+            background: var(--secondary);
             color: white;
             width: 100%;
-            padding: 15px;
+            padding: 16px;
             border: none;
-            border-radius: 12px;
+            border-radius: 15px;
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 30px;
             transition: 0.2s;
+            font-family: 'Poppins', sans-serif;
         }
-        .submit-btn:hover { background: var(--primary-hover); }
-        .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .submit-btn:hover { 
+            background: #357abd; 
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+        .submit-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
 
-        /* --- LOADING & SUCCESS --- */
-        #loader, #success-msg { display: none; text-align: center; margin-top: 20px; }
+        /* --- STATES --- */
+        #loader, #success-msg, #error-msg { display: none; text-align: center; margin-top: 20px; }
+        
         .spinner {
             border: 3px solid #eee; border-top: 3px solid var(--primary);
             border-radius: 50%; width: 30px; height: 30px;
@@ -137,10 +200,19 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        #success-msg { color: #27ae60; font-weight: 600; }
-        
-        /* Auto-Suggest List Styling */
-        datalist { font-family: 'Poppins', sans-serif; }
+        #success-msg { 
+            background: #ebfaf0; 
+            color: #27ae60; 
+            padding: 20px; 
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        #error-msg {
+            background: #fadbd8;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 12px;
+        }
 
     </style>
 </head>
@@ -152,33 +224,18 @@
 
     <form id="jobForm">
         
-        <!-- 1. ADDRESS -->
+        <!-- 1. LOCATION -->
+        <div class="section-title">Location</div>
+        
         <div class="form-group">
             <label>Suburb</label>
             <input list="suburbs" name="suburb" id="suburbInput" placeholder="Start typing suburb..." required autocomplete="off">
             <datalist id="suburbs">
-                <!-- Major Sydney Suburbs (Expanded list handled in JS) -->
-                <option value="Mosman">
-                <option value="Bondi Beach">
-                <option value="Coogee">
-                <option value="Manly">
-                <option value="Surry Hills">
-                <option value="Paddington">
-                <option value="Balmain">
-                <option value="Double Bay">
-                <option value="Rose Bay">
-                <option value="Vaucluse">
-                <option value="Randwick">
-                <option value="Newtown">
-                <option value="Alexandria">
-                <option value="Cronulla">
-                <option value="Parramatta">
-                <option value="Chatswood">
-                <option value="Neutral Bay">
-                <option value="Cremorne">
-                <option value="Bronte">
-                <option value="Clovelly">
-                <!-- User can type others -->
+                <option value="Mosman"><option value="Bondi Beach"><option value="Coogee"><option value="Manly">
+                <option value="Surry Hills"><option value="Paddington"><option value="Balmain"><option value="Double Bay">
+                <option value="Rose Bay"><option value="Vaucluse"><option value="Randwick"><option value="Newtown">
+                <option value="Alexandria"><option value="Cronulla"><option value="Parramatta"><option value="Chatswood">
+                <option value="Neutral Bay"><option value="Cremorne"><option value="Bronte"><option value="Clovelly">
             </datalist>
         </div>
 
@@ -192,14 +249,16 @@
             <input type="text" id="fullAddress" placeholder="123 Example St" required>
         </div>
 
-        <!-- 2. SHIFTS (Dynamic) -->
-        <div class="form-group">
-            <label>Dates & Times (Max 7)</label>
-            <div id="shiftsContainer"></div>
-            <button type="button" class="add-btn" onclick="addShift()">+ Add Shift</button>
-        </div>
+        <!-- 2. SHIFTS -->
+        <div class="section-title">Dates & Times</div>
+        <p style="font-size:0.85rem; color:#888; margin-top:-10px; margin-bottom:15px;">You can add up to 7 shifts for this request.</p>
+        
+        <div id="shiftsContainer"></div>
+        <button type="button" class="add-btn" onclick="addShift()">+ Add Another Shift</button>
 
         <!-- 3. CHILDREN -->
+        <div class="section-title">Children</div>
+        
         <div class="form-group">
             <label>How many children?</label>
             <div class="kid-selector">
@@ -211,28 +270,33 @@
         </div>
 
         <!-- 4. RATE -->
+        <div class="section-title">Rate</div>
         <div class="form-group">
             <label>Hourly Rate ($)</label>
             <input type="number" id="hourlyRate" placeholder="35" min="20" required>
         </div>
 
-        <button type="submit" class="submit-btn" id="submitBtn">Post Job</button>
+        <button type="submit" class="submit-btn" id="submitBtn">Post Job Request</button>
 
+        <!-- FEEDBACK STATES -->
         <div id="loader">
             <div class="spinner"></div>
             <div>Sending request to nannies...</div>
         </div>
 
         <div id="success-msg">
-            Success! Your job has been posted. We are emailing nannies now.
+            Success! Your job has been posted.<br>We are emailing our nannies now.
         </div>
+        
+        <div id="error-msg"></div>
 
     </form>
 </div>
 
 <script>
     // ================= CONFIG =================
-    const SCRIPT_URL = "YOUR_NEW_GAS_DEPLOYMENT_URL_HERE"; 
+    // Your provided GAS Deployment URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynlsLS9ZzA0YsuIh6l6edfEdgWnw1Xg79RB2tJk0E8dT-ITdYw69ejiL4YKb2dOThzhA/exec";
     // ==========================================
 
     let shiftCount = 0;
@@ -243,7 +307,7 @@
         // Validate CID
         const params = new URLSearchParams(window.location.search);
         if (!params.get('cid')) {
-            alert("Error: No Contact ID found. Please access this page from your link.");
+            alert("Error: No Contact ID found. Please access this page from your personalized link.");
             document.getElementById('jobForm').style.display = 'none';
         }
         
@@ -266,15 +330,17 @@
         
         div.innerHTML = `
             ${shiftCount > 1 ? `<button type="button" class="remove-btn" onclick="removeShift(${shiftCount})">×</button>` : ''}
-            <label>Date</label>
-            <input type="date" class="shift-date" required>
+            <div class="form-group" style="margin-bottom:0">
+                <label>Date</label>
+                <input type="date" class="shift-date" required>
+            </div>
             <div class="time-grid">
                 <div>
-                    <label style="font-size:0.8rem">Start</label>
+                    <label style="font-size:0.8rem">Start Time</label>
                     <input type="time" class="shift-start" required>
                 </div>
                 <div>
-                    <label style="font-size:0.8rem">Finish</label>
+                    <label style="font-size:0.8rem">Finish Time</label>
                     <input type="time" class="shift-end" required>
                 </div>
             </div>
@@ -314,8 +380,8 @@
                     <div>
                         <label>Gender</label>
                         <select class="kid-gender">
-                            <option value="M">Boy</option>
-                            <option value="F">Girl</option>
+                            <option value="Boy">Boy</option>
+                            <option value="Girl">Girl</option>
                         </select>
                     </div>
                 </div>
@@ -329,7 +395,7 @@
         e.preventDefault();
         
         if (selectedKidCount === 0) {
-            alert("Please select number of children.");
+            alert("Please select the number of children.");
             return;
         }
 
@@ -363,7 +429,7 @@
 
         // D. Construct Payload
         const payload = {
-            action: "NEW_JOB",
+            action: "BSR", // CRITICAL: Routes to the new BSR handler
             contactId: contactId,
             suburb: suburb,
             postcode: postcode,
@@ -377,11 +443,14 @@
         // E. Send
         const btn = document.getElementById('submitBtn');
         const loader = document.getElementById('loader');
+        const errorMsg = document.getElementById('error-msg');
         
         btn.style.display = 'none';
         loader.style.display = 'block';
+        errorMsg.style.display = 'none';
 
         try {
+            // We use 'text/plain' to avoid CORS issues with GAS
             const response = await fetch(SCRIPT_URL, {
                 method: "POST",
                 redirect: "follow",
@@ -394,16 +463,23 @@
             loader.style.display = 'none';
 
             if (result.status === 'success') {
+                document.getElementById('jobForm').reset();
+                document.getElementById('shiftsContainer').innerHTML = '';
+                document.getElementById('kidsContainer').innerHTML = '';
+                addShift(); // Reset to 1 shift
+                document.querySelectorAll('.kid-option').forEach(el => el.classList.remove('selected'));
                 document.getElementById('success-msg').style.display = 'block';
-                // Optional: Redirect or clear form
+                // Hide success message after 10 seconds? Optional.
             } else {
-                alert("Error: " + result.message);
+                errorMsg.innerText = "Error: " + result.message;
+                errorMsg.style.display = 'block';
                 btn.style.display = 'block';
             }
 
         } catch (err) {
             console.error(err);
-            alert("Connection Failed.");
+            errorMsg.innerText = "Connection Failed. Please try again.";
+            errorMsg.style.display = 'block';
             loader.style.display = 'none';
             btn.style.display = 'block';
         }
