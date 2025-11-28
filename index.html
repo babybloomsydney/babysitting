@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request a Babysitter | Baby Bloom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF8FAB;
+            --primary-hover: #fa7da0;
+            --bg: #F9FAFC;
+            --text: #2c3e50;
+            --input-bg: #fff;
+            --border: #e1e4e8;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        h1 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; font-size: 0.9rem; }
+
+        /* --- FORM ELEMENTS --- */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box; /* Fix width issues */
+            font-size: 0.95rem;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 143, 171, 0.2);
+        }
+
+        /* --- DYNAMIC SECTIONS (Shifts & Kids) --- */
+        .dynamic-row {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            position: relative;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: #ff6b6b; color: white;
+            border: none; width: 25px; height: 25px;
+            border-radius: 50%; cursor: pointer;
+            font-weight: bold; line-height: 25px;
+            text-align: center; padding: 0;
+        }
+
+        .add-btn {
+            background: #fff;
+            border: 2px dashed var(--primary);
+            color: var(--primary);
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .add-btn:hover { background: #fff0f5; }
+
+        /* Grid for Times */
+        .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+
+        /* Grid for Kid Details */
+        .kid-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+
+        /* --- KID SELECTOR (1, 2, 3) --- */
+        .kid-selector { display: flex; gap: 10px; }
+        .kid-option {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .kid-option.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* --- SUBMIT BUTTON --- */
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.2s;
+        }
+        .submit-btn:hover { background: var(--primary-hover); }
+        .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* --- LOADING & SUCCESS --- */
+        #loader, #success-msg { display: none; text-align: center; margin-top: 20px; }
+        .spinner {
+            border: 3px solid #eee; border-top: 3px solid var(--primary);
+            border-radius: 50%; width: 30px; height: 30px;
+            animation: spin 1s linear infinite; margin: 0 auto 10px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #success-msg { color: #27ae60; font-weight: 600; }
+        
+        /* Auto-Suggest List Styling */
+        datalist { font-family: 'Poppins', sans-serif; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Post a Job</h1>
+    <p class="subtitle">Find a trusted Baby Bloom nanny</p>
+
+    <form id="jobForm">
+        
+        <!-- 1. ADDRESS -->
+        <div class="form-group">
+            <label>Suburb</label>
+            <input list="suburbs" name="suburb" id="suburbInput" placeholder="Start typing suburb..." required autocomplete="off">
+            <datalist id="suburbs">
+                <!-- Major Sydney Suburbs (Expanded list handled in JS) -->
+                <option value="Mosman">
+                <option value="Bondi Beach">
+                <option value="Coogee">
+                <option value="Manly">
+                <option value="Surry Hills">
+                <option value="Paddington">
+                <option value="Balmain">
+                <option value="Double Bay">
+                <option value="Rose Bay">
+                <option value="Vaucluse">
+                <option value="Randwick">
+                <option value="Newtown">
+                <option value="Alexandria">
+                <option value="Cronulla">
+                <option value="Parramatta">
+                <option value="Chatswood">
+                <option value="Neutral Bay">
+                <option value="Cremorne">
+                <option value="Bronte">
+                <option value="Clovelly">
+                <!-- User can type others -->
+            </datalist>
+        </div>
+
+        <div class="form-group">
+            <label>Postcode</label>
+            <input type="tel" id="postcode" placeholder="2000" maxlength="4" required>
+        </div>
+
+        <div class="form-group">
+            <label>Full Address (Street & No.)</label>
+            <input type="text" id="fullAddress" placeholder="123 Example St" required>
+        </div>
+
+        <!-- 2. SHIFTS (Dynamic) -->
+        <div class="form-group">
+            <label>Dates & Times (Max 7)</label>
+            <div id="shiftsContainer"></div>
+            <button type="button" class="add-btn" onclick="addShift()">+ Add Shift</button>
+        </div>
+
+        <!-- 3. CHILDREN -->
+        <div class="form-group">
+            <label>How many children?</label>
+            <div class="kid-selector">
+                <div class="kid-option" onclick="selectKids(1)" id="k1">1</div>
+                <div class="kid-option" onclick="selectKids(2)" id="k2">2</div>
+                <div class="kid-option" onclick="selectKids(3)" id="k3">3</div>
+            </div>
+            <div id="kidsContainer" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- 4. RATE -->
+        <div class="form-group">
+            <label>Hourly Rate ($)</label>
+            <input type="number" id="hourlyRate" placeholder="35" min="20" required>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Post Job</button>
+
+        <div id="loader">
+            <div class="spinner"></div>
+            <div>Sending request to nannies...</div>
+        </div>
+
+        <div id="success-msg">
+            Success! Your job has been posted. We are emailing nannies now.
+        </div>
+
+    </form>
+</div>
+
+<script>
+    // ================= CONFIG =================
+    const SCRIPT_URL = "YOUR_NEW_GAS_DEPLOYMENT_URL_HERE"; 
+    // ==========================================
+
+    let shiftCount = 0;
+    let selectedKidCount = 0;
+
+    // 1. Initialize
+    window.addEventListener('DOMContentLoaded', () => {
+        // Validate CID
+        const params = new URLSearchParams(window.location.search);
+        if (!params.get('cid')) {
+            alert("Error: No Contact ID found. Please access this page from your link.");
+            document.getElementById('jobForm').style.display = 'none';
+        }
+        
+        // Add first shift by default
+        addShift();
+    });
+
+    // 2. Add Shift Logic
+    function addShift() {
+        if (shiftCount >= 7) {
+            alert("Maximum 7 shifts per request.");
+            return;
+        }
+        shiftCount++;
+        
+        const container = document.getElementById('shiftsContainer');
+        const div = document.createElement('div');
+        div.className = 'dynamic-row';
+        div.id = `shift-${shiftCount}`;
+        
+        div.innerHTML = `
+            ${shiftCount > 1 ? `<button type="button" class="remove-btn" onclick="removeShift(${shiftCount})">×</button>` : ''}
+            <label>Date</label>
+            <input type="date" class="shift-date" required>
+            <div class="time-grid">
+                <div>
+                    <label style="font-size:0.8rem">Start</label>
+                    <input type="time" class="shift-start" required>
+                </div>
+                <div>
+                    <label style="font-size:0.8rem">Finish</label>
+                    <input type="time" class="shift-end" required>
+                </div>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function removeShift(id) {
+        const el = document.getElementById(`shift-${id}`);
+        if(el) {
+            el.remove();
+            shiftCount--;
+        }
+    }
+
+    // 3. Child Logic
+    function selectKids(num) {
+        selectedKidCount = num;
+        
+        // Visual Selection
+        document.querySelectorAll('.kid-option').forEach(el => el.classList.remove('selected'));
+        document.getElementById(`k${num}`).classList.add('selected');
+
+        // Render Inputs
+        const container = document.getElementById('kidsContainer');
+        container.innerHTML = ''; // Clear
+
+        for(let i=1; i<=num; i++) {
+            const div = document.createElement('div');
+            div.className = 'dynamic-row';
+            div.innerHTML = `
+                <div class="kid-grid">
+                    <div>
+                        <label>Age (Child ${i})</label>
+                        <input type="text" class="kid-age" placeholder="e.g. 2 years" required>
+                    </div>
+                    <div>
+                        <label>Gender</label>
+                        <select class="kid-gender">
+                            <option value="M">Boy</option>
+                            <option value="F">Girl</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    // 4. Form Submission
+    document.getElementById('jobForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (selectedKidCount === 0) {
+            alert("Please select number of children.");
+            return;
+        }
+
+        // A. Gather Data
+        const params = new URLSearchParams(window.location.search);
+        const contactId = params.get('cid');
+
+        const suburb = document.getElementById('suburbInput').value;
+        const postcode = document.getElementById('postcode').value;
+        const fullAddress = document.getElementById('fullAddress').value;
+        const rate = document.getElementById('hourlyRate').value;
+
+        // B. Gather Shifts
+        const shifts = [];
+        document.querySelectorAll('#shiftsContainer .dynamic-row').forEach(row => {
+            shifts.push({
+                date: row.querySelector('.shift-date').value,
+                start: row.querySelector('.shift-start').value,
+                end: row.querySelector('.shift-end').value
+            });
+        });
+
+        // C. Gather Kids
+        const kids = [];
+        document.querySelectorAll('#kidsContainer .dynamic-row').forEach(row => {
+            kids.push({
+                age: row.querySelector('.kid-age').value,
+                gender: row.querySelector('.kid-gender').value
+            });
+        });
+
+        // D. Construct Payload
+        const payload = {
+            action: "NEW_JOB",
+            contactId: contactId,
+            suburb: suburb,
+            postcode: postcode,
+            fullAddress: fullAddress,
+            hourlyRate: rate,
+            numChildren: selectedKidCount,
+            shifts: shifts,
+            children: kids
+        };
+
+        // E. Send
+        const btn = document.getElementById('submitBtn');
+        const loader = document.getElementById('loader');
+        
+        btn.style.display = 'none';
+        loader.style.display = 'block';
+
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
+            });
+            
+            const result = await response.json();
+            
+            loader.style.display = 'none';
+
+            if (result.status === 'success') {
+                document.getElementById('success-msg').style.display = 'block';
+                // Optional: Redirect or clear form
+            } else {
+                alert("Error: " + result.message);
+                btn.style.display = 'block';
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Connection Failed.");
+            loader.style.display = 'none';
+            btn.style.display = 'block';
+        }
+    });
+
+</script>
+
+</body>
+</html>
