@@ -207,6 +207,11 @@
                 <input type="hidden" id="postcode"> <!-- Hidden, populated by JS -->
             </div>
 
+            <div class="input-group">
+                <div class="section-label">Full Address (Street & No.)</div>
+                <input type="text" id="fullAddress" placeholder="123 Example St" required>
+            </div>
+
             <div class="section-label">Hourly Pay</div>
             <div class="slider-box">
                 <input type="range" id="rateSlider" min="35" max="75" value="35" oninput="updateRateDisplay()">
@@ -431,9 +436,11 @@
         const starts = document.querySelectorAll('.shift-start');
         const ends = document.querySelectorAll('.shift-end');
         const suburb = document.getElementById('suburbInput').value;
+        const fullAddress = document.getElementById('fullAddress').value;
 
         // Check filled fields
         if (!suburb) { alert("Please select a suburb."); return false; }
+        if (!fullAddress) { alert("Please enter the street address."); return false; }
         
         // Check Dates Logic
         const today = new Date().toISOString().split('T')[0];
@@ -550,16 +557,15 @@
         let subFull = document.getElementById('suburbInput').value;
         let sub = subFull.split(',')[0].trim();
         let pc = document.getElementById('postcode').value; 
-        // Note: postcode is hidden input, populated by dropdown logic. 
-        // If manual type, it might be empty, so fallback:
         if (!pc && subFull.includes(',')) pc = subFull.split(',')[1].trim();
 
+        // FIXED PAYLOAD: Capture fullAddress
         const payload = {
             action: "BSR",
             contactId: params.get('cid'),
             suburb: sub,
             postcode: pc,
-            fullAddress: "", // Removed as requested
+            fullAddress: document.getElementById('fullAddress').value, 
             hourlyRate: document.getElementById('rateSlider').value,
             totalHours: document.getElementById('sumHours').innerText,
             estimatedPay: document.getElementById('sumPay').innerText,
