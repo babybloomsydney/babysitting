@@ -185,422 +185,360 @@
 </head>
 <body>
 
-    <!-- HEADER -->
-    <div class="header">
-        <h1>Find a Babysitter</h1>
-        <div class="subtitle">We will find you a trusted and verified sitter</div>
+    <!-- 1. SECURITY OVERLAY (Visible on Load) -->
+    <div id="security-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#ffffff; z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+        <div class="spinner" id="sec-spinner"></div>
+        <h3 id="sec-title" style="color:#2c3e50; font-family:'Poppins',sans-serif; margin:0 0 10px 0;">Verifying Security Token...</h3>
+        <p id="sec-desc" style="color:#7f8c8d; font-family:'Poppins',sans-serif; font-size:0.9rem; max-width:300px;">Please wait while we validate your secure session.</p>
     </div>
 
-    <!-- WIZARD -->
-    <form id="wizardForm" class="wizard-container">
+    <!-- 2. MAIN APP (Hidden initially) -->
+    <div id="app-container" style="display:none;">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>Find a Babysitter</h1>
+            <div class="subtitle">We will find you a trusted and verified sitter</div>
+        </div>
         
-        <!-- STEP 1: JOB DETAILS -->
-        <div id="step1" class="step active">
-            <div class="section-label">Dates & Times</div>
-            <div class="scroll-list" id="shiftsContainer"></div>
-            <button type="button" class="mini-btn" onclick="addShift()">+ Add Shift</button>
-
-            <div class="section-label" style="margin-top: 20px;">Location</div>
-            <div class="input-group">
-                <input list="suburbs" type="text" id="suburbInput" placeholder="Select Suburb..." required onchange="validateSuburb()">
-                <datalist id="suburbs"></datalist>
-                <input type="hidden" id="postcode"> <!-- Hidden, populated by JS -->
-            </div>
-
-            <div class="input-group">
-                <div class="section-label">Full Address (Street & No.)</div>
-                <input type="text" id="fullAddress" placeholder="123 Example St" required>
-            </div>
-
-            <div class="section-label">Hourly Pay</div>
-            <div class="slider-box">
-                <input type="range" id="rateSlider" min="35" max="75" value="35" oninput="updateRateDisplay()">
-                <div class="rate-val">$<span id="rateVal">35</span></div>
-            </div>
-        </div>
-
-        <!-- STEP 2: CHILD DETAILS -->
-        <div id="step2" class="step">
-            <div class="section-label">Number of Children</div>
-            <div class="kid-options">
-                <div class="k-opt" onclick="selectKids(1)" id="k1">1</div>
-                <div class="k-opt" onclick="selectKids(2)" id="k2">2</div>
-                <div class="k-opt" onclick="selectKids(3)" id="k3">3</div>
-            </div>
-
-            <div class="section-label">Details</div>
-            <div id="kidsContainer"></div>
-        </div>
-
-        <!-- STEP 3: SUMMARY -->
-        <div id="step3" class="step">
-            <div class="section-label">Review Request</div>
+        <!-- WIZARD -->
+        <form id="wizardForm" class="wizard-container">
             
-            <div class="summary-card">
-                <div class="sum-row">
-                    <span class="sum-label">Location</span>
-                    <span class="sum-val" id="sumLocation">-</span>
+            <!-- STEP 1: JOB DETAILS -->
+            <div id="step1" class="step active">
+                <div class="section-label">Dates & Times</div>
+                <div class="scroll-list" id="shiftsContainer"></div>
+                <button type="button" class="mini-btn" onclick="addShift()">+ Add Shift</button>
+
+                <div class="section-label" style="margin-top: 20px;">Location</div>
+                <div class="input-group">
+                    <input list="suburbs" type="text" id="suburbInput" placeholder="Select Suburb..." required onchange="validateSuburb()">
+                    <datalist id="suburbs"></datalist>
+                    <input type="hidden" id="postcode"> <!-- Hidden, populated by JS -->
                 </div>
-                <div class="sum-row">
-                    <span class="sum-label">Children</span>
-                    <span class="sum-val" id="sumKids">-</span>
+
+                <div class="input-group">
+                    <div class="section-label">Full Address (Street & No.)</div>
+                    <input type="text" id="fullAddress" placeholder="123 Example St" required>
                 </div>
-                <div class="sum-row">
-                    <span class="sum-label">Rate</span>
-                    <span class="sum-val" id="sumRate">-</span>
+
+                <div class="section-label">Hourly Pay</div>
+                <div class="slider-box">
+                    <input type="range" id="rateSlider" min="35" max="75" value="35" oninput="updateRateDisplay()">
+                    <div class="rate-val">$<span id="rateVal">35</span></div>
                 </div>
             </div>
 
-            <div class="section-label">Shifts</div>
-            <div class="summary-card" id="sumShiftsList"></div>
-
-            <div class="summary-card" style="background:#ebfaf0; border:1px solid #c3e6cb;">
-                <div class="sum-row">
-                    <span class="sum-label">Total Hours</span>
-                    <span class="sum-val" id="sumHours">0</span>
+            <!-- STEP 2: CHILD DETAILS -->
+            <div id="step2" class="step">
+                <div class="section-label">Number of Children</div>
+                <div class="kid-options">
+                    <div class="k-opt" onclick="selectKids(1)" id="k1">1</div>
+                    <div class="k-opt" onclick="selectKids(2)" id="k2">2</div>
+                    <div class="k-opt" onclick="selectKids(3)" id="k3">3</div>
                 </div>
-                <div class="sum-row">
-                    <span class="sum-label" style="font-weight:700; color:#155724;">Est. Total Pay</span>
-                    <span class="sum-val total-highlight">$<span id="sumPay">0</span></span>
+
+                <div class="section-label">Details</div>
+                <div id="kidsContainer"></div>
+            </div>
+
+            <!-- STEP 3: SUMMARY -->
+            <div id="step3" class="step">
+                <div class="section-label">Review Request</div>
+                
+                <div class="summary-card">
+                    <div class="sum-row">
+                        <span class="sum-label">Location</span>
+                        <span class="sum-val" id="sumLocation">-</span>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sum-label">Children</span>
+                        <span class="sum-val" id="sumKids">-</span>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sum-label">Rate</span>
+                        <span class="sum-val" id="sumRate">-</span>
+                    </div>
+                </div>
+
+                <div class="section-label">Shifts</div>
+                <div class="summary-card" id="sumShiftsList"></div>
+
+                <div class="summary-card" style="background:#ebfaf0; border:1px solid #c3e6cb;">
+                    <div class="sum-row">
+                        <span class="sum-label">Total Hours</span>
+                        <span class="sum-val" id="sumHours">0</span>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sum-label" style="font-weight:700; color:#155724;">Est. Total Pay</span>
+                        <span class="sum-val total-highlight">$<span id="sumPay">0</span></span>
+                    </div>
                 </div>
             </div>
+
+        </form>
+
+        <!-- FOOTER NAVIGATION -->
+        <div class="footer-nav">
+            <button type="button" class="nav-btn btn-back" id="backBtn" onclick="prevStep()" style="display:none;">Back</button>
+            <button type="button" class="nav-btn btn-next" id="nextBtn" onclick="nextStep()">Continue</button>
         </div>
-
-    </form>
-
-    <!-- FOOTER NAVIGATION -->
-    <div class="footer-nav">
-        <button type="button" class="nav-btn btn-back" id="backBtn" onclick="prevStep()" style="display:none;">Back</button>
-        <button type="button" class="nav-btn btn-next" id="nextBtn" onclick="nextStep()">Continue</button>
     </div>
 
     <!-- STATES -->
-    <div id="loader">
-        <div class="spinner"></div>
-        <h3>Sending Request...</h3>
-        <p style="color:#777; font-size:0.9rem;">Please wait while we notify our nannies.</p>
-    </div>
+    <div id="loader" style="display:none; text-align:center; margin-top:20px;"><div class="spinner"></div><h3>Sending Request...</h3><p>Please wait while we notify our nannies.</p></div>
+    <div id="success-view" style="display:none; text-align:center; margin-top:20px;"><div style="font-size:3rem;">🎉</div><h2 style="color:var(--primary);">Request Sent!</h2><p>We have emailed our available nannies.</p></div>
 
-    <div id="success-view">
-        <div style="font-size:3rem;">🎉</div>
-        <h2 style="color:var(--primary);">Request Sent!</h2>
-        <p>We have emailed our available nannies.<br>You will be notified when one accepts.</p>
-    </div>
-
+<!-- ========================================== -->
+<!-- BLOCK 1: AUTHORIZATION & SECURITY (Edit this block to change Auth logic) -->
+<!-- ========================================== -->
 <script>
-    // --- CONFIG ---
+    const WIX_VERIFY_URL = "https://www.babybloomsydney.com.au/_functions/verifyJobToken";
+    const WIX_HOME_URL = "https://www.babybloomsydney.com.au/post-a-job"; 
+    
+    // Global variable to store the securely retrieved ID
+    let retrievedContactId = ""; 
+
+    // Immediate Execution on Load
+    window.addEventListener('DOMContentLoaded', async () => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
+
+        if (!token) { denyAccess("Invalid Link"); return; }
+
+        let attempts = 0;
+        const maxAttempts = 8; // Try for ~8 seconds to allow for DB write latency
+
+        const pollToken = async () => {
+            try {
+                const response = await fetch(`${WIX_VERIFY_URL}?token=${token}`);
+                const data = await response.json();
+
+                if (data.valid === true && data.contactId) {
+                    // SUCCESS: Store ID securely
+                    retrievedContactId = data.contactId;
+                    grantAccess();
+                } else {
+                    // FAIL: Retry logic
+                    attempts++;
+                    if (attempts < maxAttempts) {
+                        setTimeout(pollToken, 1000); 
+                    } else {
+                        denyAccess("Link Expired or Already Used");
+                    }
+                }
+            } catch (err) {
+                denyAccess("Connection Error");
+            }
+        };
+        pollToken();
+    });
+
+    function grantAccess() {
+        const overlay = document.getElementById('security-overlay');
+        const app = document.getElementById('app-container');
+        
+        overlay.style.transition = "opacity 0.5s";
+        overlay.style.opacity = '0';
+        
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            app.style.display = 'block'; // REVEAL APP
+            
+            // Trigger the Form Initialization in Block 2
+            if (typeof initializeForm === "function") {
+                initializeForm();
+            }
+        }, 500);
+    }
+
+    function denyAccess(reason) {
+        document.getElementById('sec-spinner').style.display = 'none';
+        document.getElementById('sec-title').innerText = "Access Denied";
+        document.getElementById('sec-title').style.color = "#c0392b";
+        document.getElementById('sec-desc').innerHTML = `<strong>${reason}</strong><br><br>Redirecting you to generate a new link...`;
+        setTimeout(() => { window.location.href = WIX_HOME_URL; }, 3000);
+    }
+</script>
+
+<!-- ========================================== -->
+<!-- BLOCK 2: APPLICATION LOGIC (FORM) -->
+<!-- ========================================== -->
+<script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2KPVCl3NPfEezWJYeAe5mH4IoYv-g9ORTzr-xEN2cie0rH4EbSxypb_vRSu0pkJxWAA/exec";
     
-    // --- DATA ---
-    const SUBURB_DATA = {
+    // FULL DATA
+    const SUBURB_DATA = { 
         "Sydney":"2000","Ultimo":"2007","Chippendale":"2008","Pyrmont":"2009","Surry Hills":"2010","Potts Point":"2011","Alexandria":"2015","Redfern":"2016","Waterloo":"2017","Rosebery":"2018","Botany":"2019","Mascot":"2020","Paddington":"2021","Bondi Junction":"2022","Bellevue Hill":"2023","Waverley":"2024","Woollahra":"2025","Bondi":"2026","Edgecliff":"2027","Double Bay":"2028","Rose Bay":"2029","Vaucluse":"2030","Randwick":"2031","Kingsford":"2032","Kensington":"2033","Coogee":"2034","Maroubra":"2035","Little Bay":"2036","Glebe":"2037","Annandale":"2038","Rozelle":"2039","Leichhardt":"2040","Balmain":"2041","Newtown":"2042","Erskineville":"2043","St Peters":"2044","Haberfield":"2045","Five Dock":"2046","Drummoyne":"2047","Stanmore":"2048","Petersham":"2049","Camperdown":"2050","North Sydney":"2060","Kirribilli":"2061","Cammeray":"2062","Northbridge":"2063","Artarmon":"2064","Crows Nest":"2065","Lane Cove":"2066","Chatswood":"2067","Willoughby":"2068","Roseville":"2069","Lindfield":"2070","Killara":"2071","Gordon":"2072","Pymble":"2073","Turramurra":"2074","St Ives":"2075","Wahroonga":"2076","Hornsby":"2077","Mount Colah":"2079","Mount Kuring-Gai":"2080","Berowra":"2081","Cowan":"2082","Brooklyn":"2083","Cottage Point":"2084","Belrose":"2085","Frenchs Forest":"2086","Forestville":"2087","Mosman":"2088","Neutral Bay":"2089","Cremorne":"2090","Seaforth":"2092","Balgowlah":"2093","Fairlight":"2094","Manly":"2095","Freshwater":"2096","Collaroy":"2097","Dee Why":"2099","Brookvale":"2100","Narrabeen":"2101","Warriewood":"2102","Mona Vale":"2103","Bayview":"2104","Church Point":"2105","Newport":"2106","Avalon":"2107","Palm Beach":"2108","Hunters Hill":"2110","Gladesville":"2111","Ryde":"2112","North Ryde":"2113","West Ryde":"2114","Meadowbank":"2115","Rydalmere":"2116","Dundas":"2117","Carlingford":"2118","Beecroft":"2119","Pennant Hills":"2120","Epping":"2121","Eastwood":"2122","West Pennant Hills":"2125","Cherrybrook":"2126","Newington":"2127","Silverwater":"2128","Summer Hill":"2130","Ashfield":"2131","Croydon":"2132","Croydon Park":"2133","Burwood":"2134","Strathfield":"2135","Enfield":"2136","Concord":"2137","Rhodes":"2138","Homebush":"2140","Lidcombe":"2141","Granville":"2142","Regents Park":"2143","Auburn":"2144","Wentworthville":"2145","Toongabbie":"2146","Seven Hills":"2147","Blacktown":"2148","Parramatta":"2150","North Rocks":"2151","Northmead":"2152","Baulkham Hills":"2153","Castle Hill":"2154","Kellyville":"2155","Annangrove":"2156","Glenorie":"2157","Dural":"2158","Galston":"2159","Merrylands":"2160","Guildford":"2161","Chester Hill":"2162","Villawood":"2163","Smithfield":"2164","Fairfield":"2165","Canley Vale":"2166","Green Valley":"2168","Liverpool":"2170","Hoxton Park":"2171","Bossley Park":"2176","Greenacre":"2190","Belfield":"2191","Belmore":"2192","Canterbury":"2193","Campsie":"2194","Lakemba":"2195","Punchbowl":"2196","Bass Hill":"2197","Georges Hall":"2198","Yagoona":"2199","Bankstown":"2200","Dulwich Hill":"2203","Marrickville":"2204","Wolli Creek":"2205","Earlwood":"2206","Bexley":"2207","Kingsgrove":"2208","Beverly Hills":"2209","Peakhurst":"2210","Padstow":"2211","Revesby":"2212","Panania":"2213","Milperra":"2214","Rockdale":"2216","Kogarah":"2217","Carlton":"2218","Sans Souci":"2219","Hurstville":"2220","Carss Park":"2221","Penshurst":"2222","Oatley":"2223","Sylvania":"2224","Oyster Bay":"2225","Jannali":"2226","Gymea":"2227","Miranda":"2228","Caringbah":"2229","Cronulla":"2230","Kurnell":"2231","Sutherland":"2232","Engadine":"2233","Menai":"2234","Campbelltown":"2560","Camden":"2570","Glenmore Park":"2745","Kingswood":"2747","Penrith":"2750","St Marys":"2760","Quakers Hill":"2763","Glenwood":"2768"
     };
 
     const AGE_OPTIONS = ["Newborn", "3-6 months", "6-12 months", "1 year", "2 years", "3 years", "4 years", "5 years", "6 years", "7 years", "8 years", "9 years", "10 years", "11 years", "12 years", "13 years", "14 years", "15 years", "16 years"];
 
-    let shiftCount = 0;
-    let currentStep = 1;
+    let shiftCount = 0; 
+    let currentStep = 1; 
     let selectedKidCount = 0;
 
-    // --- INIT ---
-    window.addEventListener('DOMContentLoaded', () => {
-        const params = new URLSearchParams(window.location.search);
-        if (!params.get('cid')) {
-            alert("Error: No Contact ID found.");
-            document.body.innerHTML = "<div style='padding:20px;text-align:center;'>Error: Invalid Link.</div>";
-            return;
-        }
-
+    // This function is called by Block 1 after successful security check
+    function initializeForm() {
         // Populate Suburbs
         const dl = document.getElementById('suburbs');
-        Object.keys(SUBURB_DATA).forEach(sub => {
-            const opt = document.createElement('option');
-            opt.value = `${sub}, ${SUBURB_DATA[sub]}`; // Format: Mosman, 2088
-            dl.appendChild(opt);
-        });
-
-        // Initialize Defaults
+        if(dl) {
+             Object.keys(SUBURB_DATA).forEach(sub => {
+                const opt = document.createElement('option'); 
+                opt.value = `${sub}, ${SUBURB_DATA[sub]}`; 
+                dl.appendChild(opt);
+            });
+        }
+        // Add defaults
         addShift();
         updateRateDisplay();
-    });
+    }
 
     // --- NAVIGATION ---
     function nextStep() {
-        if (currentStep === 1) {
-            if (!validateStep1()) return;
-            showStep(2);
-        } else if (currentStep === 2) {
-            if (!validateStep2()) return;
-            prepareSummary();
-            showStep(3);
-            document.getElementById('nextBtn').innerText = "Post Request";
-            document.getElementById('nextBtn').classList.remove('btn-next');
-            document.getElementById('nextBtn').classList.add('btn-submit');
-        } else if (currentStep === 3) {
-            submitForm();
-        }
+        if (currentStep === 1) { if (!validateStep1()) return; showStep(2); }
+        else if (currentStep === 2) { if (!validateStep2()) return; prepareSummary(); showStep(3); }
+        else if (currentStep === 3) { submitForm(); }
     }
-
     function prevStep() {
-        if (currentStep === 3) {
-            showStep(2);
-            document.getElementById('nextBtn').innerText = "Continue";
-            document.getElementById('nextBtn').classList.remove('btn-submit');
-            document.getElementById('nextBtn').classList.add('btn-next');
-        } else if (currentStep === 2) {
-            showStep(1);
-        }
+        if (currentStep === 3) showStep(2);
+        else if (currentStep === 2) showStep(1);
     }
-
     function showStep(step) {
         document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
         document.getElementById(`step${step}`).classList.add('active');
         currentStep = step;
-        
-        // Button Logic
-        const backBtn = document.getElementById('backBtn');
-        backBtn.style.display = (step === 1) ? 'none' : 'block';
+        document.getElementById('backBtn').style.display = (step === 1) ? 'none' : 'block';
+        if(step === 3) {
+            document.getElementById('nextBtn').innerText = "Post Request";
+            document.getElementById('nextBtn').classList.add('btn-submit');
+        } else {
+            document.getElementById('nextBtn').innerText = "Continue";
+            document.getElementById('nextBtn').classList.remove('btn-submit');
+        }
     }
 
-    // --- STEP 1 LOGIC (JOB) ---
+    // --- STEP 1 LOGIC ---
     function generateTimeOptions() {
         let options = "";
         for (let h=0; h<24; h++) {
             for (let m=0; m<60; m+=15) {
-                let hh = h.toString().padStart(2, '0');
-                let mm = m.toString().padStart(2, '0');
+                let hh = h.toString().padStart(2,'0'); let mm = m.toString().padStart(2,'0');
                 options += `<option value="${hh}:${mm}">${hh}:${mm}</option>`;
             }
         }
         return options;
     }
-
     function addShift() {
         if (shiftCount >= 7) return;
         shiftCount++;
-
-        // Minimum Date = Tomorrow
-        const tmrw = new Date(); tmrw.setDate(tmrw.getDate() + 1);
-        const minDate = tmrw.toISOString().split('T')[0];
-
-        const div = document.createElement('div');
-        div.className = 'dynamic-item';
-        div.id = `shift-${shiftCount}`;
-        div.innerHTML = `
-            ${shiftCount > 1 ? `<button type="button" class="remove-btn" onclick="removeShift(${shiftCount})">×</button>` : ''}
-            <div style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:#999;">Date</label>
-                <input type="date" class="shift-date" min="${minDate}" required>
-            </div>
-            <div class="time-grid">
-                <div><label>Start</label><select class="shift-start">${generateTimeOptions()}</select></div>
-                <div><label>Finish</label><select class="shift-end">${generateTimeOptions()}</select></div>
-            </div>
-        `;
+        const tmrw = new Date(); tmrw.setDate(tmrw.getDate() + 1); const minDate = tmrw.toISOString().split('T')[0];
+        const div = document.createElement('div'); div.className = 'dynamic-item'; div.id = `shift-${shiftCount}`;
+        div.innerHTML = `${shiftCount > 1 ? `<button type="button" class="remove-btn" onclick="removeShift(${shiftCount})">×</button>` : ''}<div style="margin-bottom:8px;"><label style="font-size:0.75rem; color:#999;">Date</label><input type="date" class="shift-date" min="${minDate}" required></div><div class="time-grid"><div><label>Start</label><select class="shift-start">${generateTimeOptions()}</select></div><div><label>Finish</label><select class="shift-end">${generateTimeOptions()}</select></div></div>`;
         document.getElementById('shiftsContainer').appendChild(div);
-        
-        // Defaults
-        div.querySelector('.shift-start').value = "18:00";
-        div.querySelector('.shift-end').value = "22:00";
+        div.querySelector('.shift-start').value = "18:00"; div.querySelector('.shift-end').value = "22:00";
     }
-
-    function removeShift(id) {
-        document.getElementById(`shift-${id}`).remove();
-        shiftCount--;
-    }
-
-    function updateRateDisplay() {
-        document.getElementById('rateVal').innerText = document.getElementById('rateSlider').value;
-    }
-
+    function removeShift(id) { document.getElementById(`shift-${id}`).remove(); shiftCount--; }
+    function updateRateDisplay() { document.getElementById('rateVal').innerText = document.getElementById('rateSlider').value; }
+    
     function validateSuburb() {
         const val = document.getElementById('suburbInput').value;
         const parts = val.split(',');
-        if (parts.length > 1) {
-            // User likely picked from dropdown
-            document.getElementById('postcode').value = parts[1].trim();
-        } else {
-            // User typed it manually
-            const subName = val.trim();
-            // Try match against keys
-            const match = Object.keys(SUBURB_DATA).find(k => k.toLowerCase() === subName.toLowerCase());
-            if (match) {
-                document.getElementById('postcode').value = SUBURB_DATA[match];
-                document.getElementById('suburbInput').value = `${match}, ${SUBURB_DATA[match]}`;
-            }
+        if (parts.length > 1) { document.getElementById('postcode').value = parts[1].trim(); }
+        else {
+            const match = Object.keys(SUBURB_DATA).find(k => k.toLowerCase() === val.trim().toLowerCase());
+            if (match) { document.getElementById('postcode').value = SUBURB_DATA[match]; document.getElementById('suburbInput').value = `${match}, ${SUBURB_DATA[match]}`; }
         }
     }
-
     function validateStep1() {
         const dates = document.querySelectorAll('.shift-date');
-        const starts = document.querySelectorAll('.shift-start');
-        const ends = document.querySelectorAll('.shift-end');
-        const suburb = document.getElementById('suburbInput').value;
-        const fullAddress = document.getElementById('fullAddress').value;
-
-        // Check filled fields
-        if (!suburb) { alert("Please select a suburb."); return false; }
-        if (!fullAddress) { alert("Please enter the street address."); return false; }
-        
-        // Check Dates Logic
+        const sub = document.getElementById('suburbInput').value;
+        const addr = document.getElementById('fullAddress').value;
+        if (!sub) { alert("Please select a suburb."); return false; }
+        if (!addr) { alert("Please enter address."); return false; }
         const today = new Date().toISOString().split('T')[0];
         for(let d of dates) {
-            if (!d.value) { alert("Please select a date for all shifts."); return false; }
-            if (d.value <= today) { alert("Dates must be in the future (tomorrow onwards)."); return false; }
+            if (!d.value) { alert("Please select a date."); return false; }
+            if (d.value <= today) { alert("Dates must be in future."); return false; }
         }
         return true;
     }
 
-    // --- STEP 2 LOGIC (KIDS) ---
+    // --- STEP 2 LOGIC ---
     function selectKids(num) {
         selectedKidCount = num;
         document.querySelectorAll('.k-opt').forEach(el => el.classList.remove('selected'));
         document.getElementById(`k${num}`).classList.add('selected');
-
-        const container = document.getElementById('kidsContainer');
-        container.innerHTML = ''; 
-        let ageOpts = AGE_OPTIONS.map(a => `<option value="${a}">${a}</option>`).join('');
-
+        const c = document.getElementById('kidsContainer'); c.innerHTML = ''; 
+        let opts = AGE_OPTIONS.map(a => `<option value="${a}">${a}</option>`).join('');
         for(let i=1; i<=num; i++) {
-            const div = document.createElement('div');
-            div.className = 'dynamic-item';
-            div.innerHTML = `
-                <div style="font-weight:600; font-size:0.8rem; margin-bottom:5px;">Child ${i}</div>
-                <div style="display:flex; gap:10px;">
-                    <div style="flex:2"><select class="kid-age">${ageOpts}</select></div>
-                    <div style="flex:1"><select class="kid-gender"><option value="Boy">Boy</option><option value="Girl">Girl</option></select></div>
-                </div>
-            `;
-            container.appendChild(div);
+            const d = document.createElement('div'); d.className = 'dynamic-item';
+            d.innerHTML = `<div style="font-weight:600;font-size:0.8rem;margin-bottom:5px;">Child ${i}</div><div style="display:flex;gap:10px;"><div style="flex:2"><select class="kid-age">${opts}</select></div><div style="flex:1"><select class="kid-gender"><option value="Boy">Boy</option><option value="Girl">Girl</option></select></div></div>`;
+            c.appendChild(d);
         }
     }
+    function validateStep2() { if (selectedKidCount === 0) { alert("Select number of children."); return false; } return true; }
 
-    function validateStep2() {
-        if (selectedKidCount === 0) { alert("Please select number of children."); return false; }
-        return true;
-    }
-
-    // --- STEP 3 LOGIC (SUMMARY) ---
+    // --- STEP 3 LOGIC ---
     function prepareSummary() {
-        // Location
-        const sub = document.getElementById('suburbInput').value;
-        document.getElementById('sumLocation').innerText = sub;
-
-        // Kids
-        let kidSummary = [];
-        document.querySelectorAll('#kidsContainer .dynamic-item').forEach(row => {
-            kidSummary.push(row.querySelector('.kid-age').value);
-        });
-        document.getElementById('sumKids').innerText = `${selectedKidCount} (${kidSummary.join(', ')})`;
-
-        // Rate
+        document.getElementById('sumLocation').innerText = document.getElementById('suburbInput').value;
+        let ks = []; document.querySelectorAll('#kidsContainer .dynamic-item').forEach(r => ks.push(r.querySelector('.kid-age').value));
+        document.getElementById('sumKids').innerText = `${selectedKidCount} (${ks.join(', ')})`;
         const rate = parseInt(document.getElementById('rateSlider').value);
         document.getElementById('sumRate').innerText = `$${rate}/hr`;
-
-        // Shifts & Totals
-        const list = document.getElementById('sumShiftsList');
-        list.innerHTML = "";
-        let totalMins = 0;
-
-        document.querySelectorAll('#shiftsContainer .dynamic-item').forEach(row => {
-            const d = row.querySelector('.shift-date').value;
-            const s = row.querySelector('.shift-start').value;
-            const e = row.querySelector('.shift-end').value;
-            
-            // Format Date
-            const dateObj = new Date(d);
-            const dateStr = dateObj.toLocaleDateString('en-AU', { weekday:'short', day:'numeric', month:'short' });
-
-            // Calc Duration
-            const [h1, m1] = s.split(':').map(Number);
-            const [h2, m2] = e.split(':').map(Number);
-            let mins = (h2*60 + m2) - (h1*60 + m1);
-            if (mins < 0) mins += 24*60;
-            totalMins += mins;
-
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'sum-row';
-            rowDiv.innerHTML = `<span style="font-weight:500;">${dateStr}</span><span>${s} - ${e}</span>`;
-            list.appendChild(rowDiv);
+        
+        const list = document.getElementById('sumShiftsList'); list.innerHTML = ""; let tm = 0;
+        document.querySelectorAll('#shiftsContainer .dynamic-item').forEach(r => {
+            const d = r.querySelector('.shift-date').value;
+            const s = r.querySelector('.shift-start').value; const e = r.querySelector('.shift-end').value;
+            const dateStr = new Date(d).toLocaleDateString('en-AU', { weekday:'short', day:'numeric', month:'short' });
+            const [h1, m1] = s.split(':').map(Number); const [h2, m2] = e.split(':').map(Number);
+            let mins = (h2*60 + m2) - (h1*60 + m1); if (mins < 0) mins += 24*60; tm += mins;
+            const div = document.createElement('div'); div.className = 'sum-row';
+            div.innerHTML = `<span style="font-weight:500;">${dateStr}</span><span>${s} - ${e}</span>`;
+            list.appendChild(div);
         });
-
-        const totalHrs = totalMins / 60;
-        const totalPay = Math.round(totalHrs * rate);
-
-        document.getElementById('sumHours').innerText = totalHrs.toFixed(2);
-        document.getElementById('sumPay').innerText = totalPay;
+        document.getElementById('sumHours').innerText = (tm/60).toFixed(2);
+        document.getElementById('sumPay').innerText = Math.round((tm/60)*rate);
     }
 
     // --- SUBMIT ---
     async function submitForm() {
-        const params = new URLSearchParams(window.location.search);
+        const shifts = []; document.querySelectorAll('#shiftsContainer .dynamic-item').forEach(r => shifts.push({ date: r.querySelector('.shift-date').value, start: r.querySelector('.shift-start').value, end: r.querySelector('.shift-end').value }));
+        const kids = []; document.querySelectorAll('#kidsContainer .dynamic-item').forEach(r => kids.push({ age: r.querySelector('.kid-age').value, gender: r.querySelector('.kid-gender').value }));
         
-        // Gather final payload
-        const shifts = [];
-        document.querySelectorAll('#shiftsContainer .dynamic-item').forEach(row => {
-            shifts.push({
-                date: row.querySelector('.shift-date').value,
-                start: row.querySelector('.shift-start').value,
-                end: row.querySelector('.shift-end').value
-            });
-        });
-
-        const kids = [];
-        document.querySelectorAll('#kidsContainer .dynamic-item').forEach(row => {
-            kids.push({
-                age: row.querySelector('.kid-age').value,
-                gender: row.querySelector('.kid-gender').value
-            });
-        });
-
-        // Split Suburb/Postcode logic if user didn't select from dropdown
         let subFull = document.getElementById('suburbInput').value;
         let sub = subFull.split(',')[0].trim();
-        let pc = document.getElementById('postcode').value; 
+        let pc = document.getElementById('postcode').value;
         if (!pc && subFull.includes(',')) pc = subFull.split(',')[1].trim();
 
-        // FIXED PAYLOAD: Capture fullAddress
         const payload = {
             action: "BSR",
-            contactId: params.get('cid'),
-            suburb: sub,
-            postcode: pc,
-            fullAddress: document.getElementById('fullAddress').value, 
+            contactId: retrievedContactId, // USES SECURE ID FROM BLOCK 1
+            suburb: sub, postcode: pc, fullAddress: document.getElementById('fullAddress').value,
             hourlyRate: document.getElementById('rateSlider').value,
             totalHours: document.getElementById('sumHours').innerText,
             estimatedPay: document.getElementById('sumPay').innerText,
-            numChildren: selectedKidCount,
-            shifts: shifts,
-            children: kids
+            numChildren: selectedKidCount, shifts: shifts, children: kids
         };
 
-        // UI State
         document.getElementById('loader').style.display = 'flex';
 
         try {
             const response = await fetch(SCRIPT_URL, {
-                method: "POST",
-                redirect: "follow",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(payload)
+                method: "POST", redirect: "follow", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload)
             });
             const result = await response.json();
-            
             document.getElementById('loader').style.display = 'none';
 
             if (result.status === 'success') {
                 document.getElementById('success-view').style.display = 'flex';
-                document.querySelector('.footer-nav').style.display = 'none'; // Hide buttons
-            } else {
-                alert("Server Error: " + result.message);
-            }
+                document.querySelector('.footer-nav').style.display = 'none';
+            } else { alert("Server Error: " + result.message); }
         } catch (err) {
             document.getElementById('loader').style.display = 'none';
-            alert("Connection Error. Please check your internet.");
+            alert("Connection Error.");
         }
     }
-
 </script>
-
 </body>
 </html>
