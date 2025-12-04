@@ -87,9 +87,19 @@
             font-family: 'Poppins', sans-serif;
             font-size: 0.9rem;
             background: var(--white);
+            appearance: none; /* Standardize look across devices */
+            -webkit-appearance: none;
         }
         
         input:focus, select:focus { outline: none; border-color: var(--primary); }
+
+        /* Add custom arrow for selects to look consistent */
+        select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right .7em top 50%;
+            background-size: .65em auto;
+        }
 
         /* --- DYNAMIC LISTS (SCROLLABLE) --- */
         .scroll-list {
@@ -220,8 +230,10 @@
 
                 <div class="section-label" style="margin-top: 20px;">Location</div>
                 <div class="input-group">
-                    <input list="suburbs" type="text" id="suburbInput" placeholder="Select Suburb..." required onchange="validateSuburb()">
-                    <datalist id="suburbs"></datalist>
+                    <!-- STRICT DROPDOWN -->
+                    <select id="suburbInput" required onchange="validateSuburb()">
+                        <option value="" disabled selected>Select Suburb...</option>
+                    </select>
                     <input type="hidden" id="postcode"> <!-- Hidden, populated by JS -->
                 </div>
 
@@ -302,7 +314,7 @@
 <!-- ========================================== -->
 <script>
     const WIX_VERIFY_URL = "https://www.babybloomsydney.com.au/_functions/verifyJobToken";
-    const WIX_HOME_URL = "https://www.babybloomsydney.com.au/babysitting-request"; 
+    const WIX_HOME_URL = "https://www.babybloomsydney.com.au/post-a-job"; 
     
     // Global variable to store the securely retrieved ID
     let retrievedContactId = ""; 
@@ -389,13 +401,18 @@
 
     // This function is called by Block 1 after successful security check
     function initializeForm() {
-        // Populate Suburbs
-        const dl = document.getElementById('suburbs');
-        if(dl) {
-             Object.keys(SUBURB_DATA).forEach(sub => {
+        // Populate Suburbs (Now using SELECT)
+        const sel = document.getElementById('suburbInput');
+        if(sel) {
+             // Sort keys for better UX
+             const sortedSuburbs = Object.keys(SUBURB_DATA).sort();
+             sortedSuburbs.forEach(sub => {
                 const opt = document.createElement('option'); 
+                // Value = "Mosman, 2088"
                 opt.value = `${sub}, ${SUBURB_DATA[sub]}`; 
-                dl.appendChild(opt);
+                // Display = "Mosman (2088)"
+                opt.text = `${sub} (${SUBURB_DATA[sub]})`; 
+                sel.appendChild(opt);
             });
         }
         // Add defaults
@@ -450,21 +467,26 @@
     function removeShift(id) { document.getElementById(`shift-${id}`).remove(); shiftCount--; }
     function updateRateDisplay() { document.getElementById('rateVal').innerText = document.getElementById('rateSlider').value; }
     
+    // VALIDATION (Updated for Select)
     function validateSuburb() {
         const val = document.getElementById('suburbInput').value;
+        if (!val) return;
+        
+        // val is "Mosman, 2088"
         const parts = val.split(',');
-        if (parts.length > 1) { document.getElementById('postcode').value = parts[1].trim(); }
-        else {
-            const match = Object.keys(SUBURB_DATA).find(k => k.toLowerCase() === val.trim().toLowerCase());
-            if (match) { document.getElementById('postcode').value = SUBURB_DATA[match]; document.getElementById('suburbInput').value = `${match}, ${SUBURB_DATA[match]}`; }
+        if (parts.length > 1) { 
+            document.getElementById('postcode').value = parts[1].trim(); 
         }
     }
+
     function validateStep1() {
         const dates = document.querySelectorAll('.shift-date');
         const sub = document.getElementById('suburbInput').value;
         const addr = document.getElementById('fullAddress').value;
+        
         if (!sub) { alert("Please select a suburb."); return false; }
-        if (!addr) { alert("Please enter address."); return false; }
+        if (!addr) { alert("Please enter the street address."); return false; }
+        
         const today = new Date().toISOString().split('T')[0];
         for(let d of dates) {
             if (!d.value) { alert("Please select a date."); return false; }
@@ -490,7 +512,12 @@
 
     // --- STEP 3 LOGIC ---
     function prepareSummary() {
-        document.getElementById('sumLocation').innerText = document.getElementById('suburbInput').value;
+        const subVal = document.getElementById('suburbInput').value;
+        // Show only Name ("Mosman") in summary, hide postcode part
+        const subName = subVal.split(',')[0].trim();
+        
+        document.getElementById('sumLocation').innerText = subName;
+        
         let ks = []; document.querySelectorAll('#kidsContainer .dynamic-item').forEach(r => ks.push(r.querySelector('.kid-age').value));
         document.getElementById('sumKids').innerText = `${selectedKidCount} (${ks.join(', ')})`;
         const rate = parseInt(document.getElementById('rateSlider').value);
@@ -519,11 +546,12 @@
         let subFull = document.getElementById('suburbInput').value;
         let sub = subFull.split(',')[0].trim();
         let pc = document.getElementById('postcode').value;
+        // Ensure postcode is grabbed if not set by onchange event
         if (!pc && subFull.includes(',')) pc = subFull.split(',')[1].trim();
 
         const payload = {
             action: "BSR",
-            contactId: retrievedContactId, // USES SECURE ID FROM BLOCK 1
+            contactId: retrievedContactId, 
             suburb: sub, postcode: pc, fullAddress: document.getElementById('fullAddress').value,
             hourlyRate: document.getElementById('rateSlider').value,
             totalHours: document.getElementById('sumHours').innerText,
