@@ -231,7 +231,7 @@
                 <div class="section-label" style="margin-top: 20px;">Location</div>
                 <div class="input-group">
                     <!-- STRICT DROPDOWN -->
-                    <select id="suburbInput" required onchange="validateSuburb()">
+                    <select id="suburbInput" required onchange="updatePostcode()">
                         <option value="" disabled selected>Select Suburb...</option>
                     </select>
                     <input type="hidden" id="postcode"> <!-- Hidden, populated by JS -->
@@ -314,7 +314,7 @@
 <!-- ========================================== -->
 <script>
     const WIX_VERIFY_URL = "https://www.babybloomsydney.com.au/_functions/verifyJobToken";
-    const WIX_HOME_URL = "https://www.babybloomsydney.com.au/babysitting-request"; 
+    const WIX_HOME_URL = "https://www.babybloomsydney.com.au/post-a-job"; 
     
     // Global variable to store the securely retrieved ID
     let retrievedContactId = ""; 
@@ -386,7 +386,7 @@
 <!-- BLOCK 2: APPLICATION LOGIC (FORM) -->
 <!-- ========================================== -->
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwR0vC91TmOw5Q3NnxzURQGCfZIg_U0tXoObflrZjOy3hJaAwZx1Wi9rssoEK7_lvHhJQ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2KPVCl3NPfEezWJYeAe5mH4IoYv-g9ORTzr-xEN2cie0rH4EbSxypb_vRSu0pkJxWAA/exec";
     
     // FULL DATA
     const SUBURB_DATA = { 
@@ -468,15 +468,17 @@
     function updateRateDisplay() { document.getElementById('rateVal').innerText = document.getElementById('rateSlider').value; }
     
     // VALIDATION (Updated for Select)
-    function validateSuburb() {
+    function updatePostcode() {
         const val = document.getElementById('suburbInput').value;
-        if (!val) return;
-        
-        // val is "Mosman, 2088"
         const parts = val.split(',');
         if (parts.length > 1) { 
             document.getElementById('postcode').value = parts[1].trim(); 
         }
+    }
+
+    function validateSuburb() {
+         // Moved logic to updatePostcode, but keep this for naming consistency if called
+         updatePostcode();
     }
 
     function validateStep1() {
